@@ -17,6 +17,7 @@ final class TunnelProcess: ObservableObject {
 
     private var process: Process?
     private var stderrTask: Task<Void, Never>?
+    private var connectedTask: Task<Void, Never>?
     private var reconnectTask: Task<Void, Never>?
     private var policy = ReconnectPolicy()
     private var manualStop = false
@@ -81,9 +82,9 @@ final class TunnelProcess: ObservableObject {
         }
 
         // After a brief window, if still running assume connected
-        Task { @MainActor [weak self] in
+        connectedTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(2))
-            guard let self, case .connecting = self.state, self.process?.isRunning == true else { return }
+            guard let self, !Task.isCancelled, case .connecting = self.state, self.process?.isRunning == true else { return }
             self.transition(to: .connected)
         }
     }
@@ -123,11 +124,7 @@ final class TunnelProcess: ObservableObject {
 
         if let err = humanError {
             lastError = err
-            try? repository.appendEvent(ConnectionEvent(
-                tunnelID: tunnelID,
-                event: .error,
-                message: err
-            ))
+            transition(to: .failed(err))
         }
     }
 
@@ -135,6 +132,8 @@ final class TunnelProcess: ObservableObject {
     private func handleTermination(exitCode: Int32, tunnel: Tunnel) {
         stderrTask?.cancel()
         stderrTask = nil
+        connectedTask?.cancel()
+        connectedTask = nil
         process = nil
 
         guard !manualStop else { return }
@@ -162,6 +161,8 @@ final class TunnelProcess: ObservableObject {
     private func terminateProcess() {
         stderrTask?.cancel()
         stderrTask = nil
+        connectedTask?.cancel()
+        connectedTask = nil
         if let proc = process, proc.isRunning {
             proc.terminate()
         }
@@ -169,6 +170,8 @@ final class TunnelProcess: ObservableObject {
     }
 
     private func transition(to newState: TunnelState) {
+        guard newState != state else { return }
+
         state = newState
         onStateChange?(newState)
 

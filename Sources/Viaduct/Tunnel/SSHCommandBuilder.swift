@@ -10,6 +10,9 @@ struct SSHCommandBuilder {
         args += ["-o", "ServerAliveCountMax=3"]
         args += ["-o", "ExitOnForwardFailure=yes"]
         args += ["-o", "StrictHostKeyChecking=\(tunnel.strictHostChecking.rawValue)"]
+        if tunnel.authMethod != .keychainPassphrase {
+            args += ["-o", "BatchMode=yes"]
+        }
 
         // Port
         if tunnel.port != 22 {

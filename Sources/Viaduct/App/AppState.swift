@@ -25,9 +25,7 @@ final class AppState {
     func loadAll() {
         tunnels = (try? repository.fetchAllTunnels()) ?? []
         tags = (try? repository.fetchAllTags()) ?? []
-        for tunnel in tunnels {
-            tunnelTags[tunnel.id] = (try? repository.fetchTags(forTunnel: tunnel.id)) ?? []
-        }
+        tunnelTags = (try? repository.fetchTagsByTunnel()) ?? [:]
     }
 
     func reload() {

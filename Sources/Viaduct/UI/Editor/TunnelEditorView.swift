@@ -87,6 +87,10 @@ struct TunnelEditorView: View {
     @State private var showIdentityFilePicker = false
     @State private var nameInvalid = false
     @State private var hostInvalid = false
+    @State private var portInvalid = false
+    @State private var localPortInvalid = false
+    @State private var remoteHostInvalid = false
+    @State private var remotePortInvalid = false
     @FocusState private var focusedField: Field?
 
     private let existingID: UUID?
@@ -109,7 +113,8 @@ struct TunnelEditorView: View {
         _identityFile = State(initialValue: tunnel?.identityFile ?? "")
         _proxyJump    = State(initialValue: tunnel?.proxyJump ?? "")
         _agentForwarding = State(initialValue: tunnel?.agentForwarding ?? false)
-        _authMethod      = State(initialValue: tunnel?.authMethod ?? .systemAgent)
+        let initialAuthMethod = tunnel?.authMethod == .keychainPassphrase ? .systemAgent : (tunnel?.authMethod ?? .systemAgent)
+        _authMethod      = State(initialValue: initialAuthMethod)
         _autoConnect     = State(initialValue: tunnel?.autoConnect ?? false)
         _strictHostChecking = State(initialValue: tunnel?.strictHostChecking ?? .acceptNew)
         _extraOptions    = State(initialValue: tunnel?.extraOptions ?? [])
@@ -208,6 +213,10 @@ struct TunnelEditorView: View {
             EditorSection(title: "On This Mac") {
                 EditorRow(label: "Local Port") {
                     portTextField($localPort, placeholder: "8080", field: .localPort)
+                        .overlay(alignment: .bottom) {
+                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
                 EditorRow(label: "Bind Address") {
@@ -222,10 +231,18 @@ struct TunnelEditorView: View {
                     TextField("db.internal", text: $remoteHost)
                         .textFieldStyle(.plain).font(.callout)
                         .focused($focusedField, equals: .remoteHost)
+                        .overlay(alignment: .bottom) {
+                            if remoteHostInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: remoteHost) { _, _ in remoteHostInvalid = false }
                 }
                 EditorDivider()
                 EditorRow(label: "Port") {
                     portTextField($remotePort, placeholder: "5432", field: .remotePort)
+                        .overlay(alignment: .bottom) {
+                            if remotePortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
                 }
             }
 
@@ -234,6 +251,10 @@ struct TunnelEditorView: View {
             EditorSection(title: "On Remote Server") {
                 EditorRow(label: "Listen Port") {
                     portTextField($remotePort, placeholder: "9090", field: .remotePort)
+                        .overlay(alignment: .bottom) {
+                            if remotePortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
                 }
             }
             forwardingArrow
@@ -241,6 +262,10 @@ struct TunnelEditorView: View {
             EditorSection(title: "Forward To (This Mac)") {
                 EditorRow(label: "Local Port") {
                     portTextField($localPort, placeholder: "9090", field: .localPort)
+                        .overlay(alignment: .bottom) {
+                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
                 EditorRow(label: "Bind Address") {
@@ -253,6 +278,10 @@ struct TunnelEditorView: View {
             EditorSection(title: "SOCKS5 Proxy") {
                 EditorRow(label: "Listen Port") {
                     portTextField($localPort, placeholder: "1080", field: .localPort)
+                        .overlay(alignment: .bottom) {
+                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
                 EditorRow(label: "Bind Address") {
@@ -294,6 +323,10 @@ struct TunnelEditorView: View {
                         .foregroundStyle(.secondary)
                     portTextField($port, placeholder: "22", field: .port)
                         .frame(width: 52)
+                        .overlay(alignment: .bottom) {
+                            if portInvalid { Rectangle().fill(.red).frame(height: 1.5) }
+                        }
+                        .onChange(of: port) { _, _ in portInvalid = false }
                 }
             }
             EditorDivider()
@@ -318,7 +351,6 @@ struct TunnelEditorView: View {
                     if OnePasswordAgent.isAvailable {
                         Text("1Password Agent").tag(AuthMethod.onePasswordAgent)
                     }
-                    Text("Keychain Passphrase").tag(AuthMethod.keychainPassphrase)
                 }
                 .labelsHidden()
                 .frame(maxWidth: 220)
@@ -395,6 +427,8 @@ struct TunnelEditorView: View {
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
             && !host.trimmingCharacters(in: .whitespaces).isEmpty
+            && isValidPort(port)
+            && isForwardingValid
     }
 
     private func save() {
@@ -402,20 +436,22 @@ struct TunnelEditorView: View {
         let h = host.trimmingCharacters(in: .whitespaces)
         if n.isEmpty { nameInvalid = true; focusedField = .name; return }
         if h.isEmpty { hostInvalid = true; focusedField = .host; return }
+        if !isValidPort(port) { portInvalid = true; focusedField = .port; return }
+        guard validateForwarding() else { return }
 
         let tunnel = Tunnel(
             id: existingID ?? UUID(),
             name: n,
             type: type,
             localPort: Int(localPort),
-            remoteHost: remoteHost.isEmpty ? nil : remoteHost,
+            remoteHost: remoteHost.trimmingCharacters(in: .whitespaces).isEmpty ? nil : remoteHost.trimmingCharacters(in: .whitespaces),
             remotePort: Int(remotePort),
-            bindAddress: bindAddress.isEmpty ? nil : bindAddress,
+            bindAddress: bindAddress.trimmingCharacters(in: .whitespaces).isEmpty ? nil : bindAddress.trimmingCharacters(in: .whitespaces),
             host: h,
-            user: user.isEmpty ? nil : user,
+            user: user.trimmingCharacters(in: .whitespaces).isEmpty ? nil : user.trimmingCharacters(in: .whitespaces),
             port: Int(port) ?? 22,
-            identityFile: identityFile.isEmpty ? nil : identityFile,
-            proxyJump: proxyJump.isEmpty ? nil : proxyJump,
+            identityFile: identityFile.trimmingCharacters(in: .whitespaces).isEmpty ? nil : identityFile.trimmingCharacters(in: .whitespaces),
+            proxyJump: proxyJump.trimmingCharacters(in: .whitespaces).isEmpty ? nil : proxyJump.trimmingCharacters(in: .whitespaces),
             agentForwarding: agentForwarding,
             authMethod: authMethod,
             autoConnect: autoConnect,
@@ -424,6 +460,50 @@ struct TunnelEditorView: View {
         )
         AppState.shared.saveTunnel(tunnel, tagIDs: Array(selectedTagIDs))
         dismiss()
+    }
+
+    private var isForwardingValid: Bool {
+        switch type {
+        case .local:
+            return isValidPort(localPort)
+                && !remoteHost.trimmingCharacters(in: .whitespaces).isEmpty
+                && isValidPort(remotePort)
+        case .remote:
+            return isValidPort(remotePort) && isValidPort(localPort)
+        case .dynamic:
+            return isValidPort(localPort)
+        }
+    }
+
+    private func validateForwarding() -> Bool {
+        localPortInvalid = false
+        remoteHostInvalid = false
+        remotePortInvalid = false
+
+        switch type {
+        case .local:
+            localPortInvalid = !isValidPort(localPort)
+            remoteHostInvalid = remoteHost.trimmingCharacters(in: .whitespaces).isEmpty
+            remotePortInvalid = !isValidPort(remotePort)
+            if localPortInvalid { focusedField = .localPort }
+            else if remoteHostInvalid { focusedField = .remoteHost }
+            else if remotePortInvalid { focusedField = .remotePort }
+        case .remote:
+            remotePortInvalid = !isValidPort(remotePort)
+            localPortInvalid = !isValidPort(localPort)
+            if remotePortInvalid { focusedField = .remotePort }
+            else if localPortInvalid { focusedField = .localPort }
+        case .dynamic:
+            localPortInvalid = !isValidPort(localPort)
+            if localPortInvalid { focusedField = .localPort }
+        }
+
+        return !localPortInvalid && !remoteHostInvalid && !remotePortInvalid
+    }
+
+    private func isValidPort(_ value: String) -> Bool {
+        guard let port = Int(value) else { return false }
+        return (1...65535).contains(port)
     }
 }
 

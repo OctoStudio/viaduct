@@ -20,6 +20,25 @@ packages:
     url: https://github.com/groue/GRDB.swift
     from: "7.0.0"
 
+schemes:
+  Viaduct:
+    build:
+      targets:
+        Viaduct: all
+        ViaductTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - ViaductTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
 targets:
   Viaduct:
     type: application

@@ -145,6 +145,26 @@ struct SSHCommandBuilderTests {
         #expect(args.contains("ExitOnForwardFailure=yes"))
     }
 
+    @Test func agentAuthUsesBatchMode() {
+        let t = localTunnel()
+        let args = SSHCommandBuilder.buildArguments(for: t)
+        #expect(args.contains("BatchMode=yes"))
+    }
+
+    @Test func keychainAuthDoesNotUseBatchMode() {
+        let t = Tunnel(
+            name: "Keychain",
+            type: .local,
+            localPort: 8080,
+            remoteHost: "db.internal",
+            remotePort: 5432,
+            host: "bastion.example.com",
+            authMethod: .keychainPassphrase
+        )
+        let args = SSHCommandBuilder.buildArguments(for: t)
+        #expect(!args.contains("BatchMode=yes"))
+    }
+
     @Test func destinationNoUserWhenNil() {
         let t = Tunnel(name: "T", type: .local, localPort: 80, remoteHost: "h", remotePort: 80, host: "myhost.com")
         let args = SSHCommandBuilder.buildArguments(for: t)

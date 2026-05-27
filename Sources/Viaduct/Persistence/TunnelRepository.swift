@@ -61,6 +61,32 @@ struct TunnelRepository {
         }
     }
 
+    func fetchTagsByTunnel() throws -> [UUID: [Tag]] {
+        try db.read { db in
+            let rows = try Row.fetchAll(db, sql: """
+                SELECT tunnel_tags.tunnelID, tags.id, tags.name, tags.color
+                FROM tunnel_tags
+                JOIN tags ON tags.id = tunnel_tags.tagID
+                ORDER BY tags.name
+                """)
+
+            var result: [UUID: [Tag]] = [:]
+            for row in rows {
+                guard
+                    let tunnelID = UUID(uuidString: row["tunnelID"]),
+                    let tagID = UUID(uuidString: row["id"])
+                else { continue }
+
+                result[tunnelID, default: []].append(Tag(
+                    id: tagID,
+                    name: row["name"],
+                    color: row["color"]
+                ))
+            }
+            return result
+        }
+    }
+
     func saveTag(_ tag: Tag) throws {
         try db.write { db in
             try tag.save(db)
@@ -86,14 +112,21 @@ struct TunnelRepository {
                 .filter(ConnectionEvent.Columns.tunnelID == event.tunnelID.uuidString)
                 .fetchCount(db)
             if count > 500 {
-                let oldest = try ConnectionEvent
-                    .filter(ConnectionEvent.Columns.tunnelID == event.tunnelID.uuidString)
-                    .order(ConnectionEvent.Columns.timestamp.asc)
-                    .limit(count - 500)
-                    .fetchAll(db)
-                for old in oldest {
-                    try old.delete(db)
-                }
+                try db.execute(sql: """
+                    DELETE FROM connection_log
+                    WHERE tunnelID = ?
+                      AND id IN (
+                        SELECT id
+                        FROM connection_log
+                        WHERE tunnelID = ?
+                        ORDER BY timestamp ASC
+                        LIMIT ?
+                      )
+                    """, arguments: [
+                        event.tunnelID.uuidString,
+                        event.tunnelID.uuidString,
+                        count - 500
+                    ])
             }
         }
     }
