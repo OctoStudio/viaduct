@@ -1,0 +1,55 @@
+name: Viaduct
+options:
+  bundleIdPrefix: com.qdecosne
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    from: "7.0.0"
+
+targets:
+  Viaduct:
+    type: application
+    platform: macOS
+    sources:
+      - Sources/Viaduct
+    resources:
+      - Sources/Viaduct/Resources/SSHDirectives.json
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.qdecosne.Viaduct
+        INFOPLIST_FILE: Sources/Viaduct/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/Viaduct/Resources/Viaduct.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: ""
+        ENABLE_PREVIEWS: YES
+    dependencies:
+      - package: GRDB
+
+  ViaductTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - Tests/ViaductTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.qdecosne.ViaductTests
+        GENERATE_INFOPLIST_FILE: YES
+    scheme:
+      testTargets:
+        - ViaductTests
+    dependencies:
+      - target: Viaduct
+      - package: GRDB

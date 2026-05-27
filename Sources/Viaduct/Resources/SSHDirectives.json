@@ -1,0 +1,158 @@
+[
+  {
+    "key": "ServerAliveInterval",
+    "description": "Sets a timeout interval in seconds after which, if no data has been received from the server, ssh will send a keepalive message.",
+    "example": "ServerAliveInterval=15",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ServerAliveCountMax",
+    "description": "Sets the number of server-alive messages which may be sent without ssh receiving any messages back from the server. If this threshold is reached, ssh will disconnect from the server.",
+    "example": "ServerAliveCountMax=3",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "StrictHostKeyChecking",
+    "description": "Controls whether ssh automatically adds new host keys. Options: yes, no, accept-new, off, ask.",
+    "example": "StrictHostKeyChecking=accept-new",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "UserKnownHostsFile",
+    "description": "Specifies a file to use for the user host key database instead of the default ~/.ssh/known_hosts.",
+    "example": "UserKnownHostsFile=~/.ssh/known_hosts_viaduct",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "Compression",
+    "description": "Specifies whether to use compression. Values: yes or no.",
+    "example": "Compression=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "CompressionLevel",
+    "description": "Specifies the compression level to use (1–9, where 1 is fast and 9 is best). Only applies when Compression=yes.",
+    "example": "CompressionLevel=6",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ForwardX11",
+    "description": "Specifies whether X11 connections will be automatically redirected over the secure channel and DISPLAY set. Values: yes or no.",
+    "example": "ForwardX11=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ExitOnForwardFailure",
+    "description": "Specifies whether ssh should terminate the connection if it cannot set up all requested dynamic, tunnel, local, and remote port forwardings.",
+    "example": "ExitOnForwardFailure=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ConnectTimeout",
+    "description": "Specifies the timeout (in seconds) used when connecting to the SSH server.",
+    "example": "ConnectTimeout=10",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "IdentitiesOnly",
+    "description": "Specifies that ssh should only use the configured authentication identity and certificate files, even if ssh-agent or a PKCS11Provider offers more identities.",
+    "example": "IdentitiesOnly=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "AddKeysToAgent",
+    "description": "Specifies whether keys should be automatically added to a running ssh-agent. Values: yes, no, ask, confirm.",
+    "example": "AddKeysToAgent=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "UseKeychain",
+    "description": "(macOS only) Specifies whether the system keychain should be used to store passphrases. Values: yes or no.",
+    "example": "UseKeychain=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "TCPKeepAlive",
+    "description": "Specifies whether the system should send TCP keepalive messages to the other side. Values: yes or no.",
+    "example": "TCPKeepAlive=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "LogLevel",
+    "description": "Gives the verbosity level used when logging messages. Values: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, DEBUG3.",
+    "example": "LogLevel=VERBOSE",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "Ciphers",
+    "description": "Specifies the ciphers allowed for protocol version 2 in order of preference.",
+    "example": "Ciphers=aes256-gcm@openssh.com,chacha20-poly1305@openssh.com",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "MACs",
+    "description": "Specifies the MAC (message authentication code) algorithms in order of preference.",
+    "example": "MACs=hmac-sha2-256,hmac-sha2-512",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "KexAlgorithms",
+    "description": "Specifies the available KEX (Key Exchange) algorithms.",
+    "example": "KexAlgorithms=curve25519-sha256,diffie-hellman-group16-sha512",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "HostKeyAlgorithms",
+    "description": "Specifies the host key signature algorithms that the client wants to use in order of preference.",
+    "example": "HostKeyAlgorithms=ssh-ed25519,rsa-sha2-512",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "BatchMode",
+    "description": "If set to yes, passphrase/password querying will be disabled. Useful in scripts and other batch jobs.",
+    "example": "BatchMode=yes",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ControlMaster",
+    "description": "Enables sharing of multiple sessions over a single network connection. Values: yes, no, ask, auto, autoask.",
+    "example": "ControlMaster=auto",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ControlPath",
+    "description": "Specify the path to the control socket used for connection sharing.",
+    "example": "ControlPath=~/.ssh/sockets/%r@%h-%p",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "ControlPersist",
+    "description": "When used in conjunction with ControlMaster, specifies that the master connection should remain open in the background after the initial client connection has been closed.",
+    "example": "ControlPersist=10m",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "SendEnv",
+    "description": "Specifies which environment variables to send to the server. Variables are space-separated and may include wildcards.",
+    "example": "SendEnv=LANG LC_*",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "SetEnv",
+    "description": "Directly specify one or more environment variables and their contents to be sent to the server.",
+    "example": "SetEnv=MY_VAR=value",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "RequestTTY",
+    "description": "Specifies whether to request a pseudo-tty for the session. Values: no, yes, force, auto.",
+    "example": "RequestTTY=no",
+    "manSection": "ssh_config(5)"
+  },
+  {
+    "key": "RemoteCommand",
+    "description": "Specifies a command to execute on the remote machine after connecting.",
+    "example": "RemoteCommand=tmux attach-session -t main",
+    "manSection": "ssh_config(5)"
+  }
+]
