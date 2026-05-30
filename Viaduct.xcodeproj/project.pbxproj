@@ -1,0 +1,676 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0002CF8788CEDF99B5166DA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC9764BAA8248B27E2FD7C43 /* Assets.xcassets */; };
+		00D9B0CE57399A8F67EA70F1 /* Tunnel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391B87F4FACD4BBEE9AEFEA7 /* Tunnel.swift */; };
+		08D9A2ED9145FE442C8A11DC /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C567CE4487D678B70B91331C /* KeychainService.swift */; };
+		0EA64430160AFCFABB5C86A1 /* ConnectionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F44CAB2A2C7847C56F24A5D6 /* ConnectionEvent.swift */; };
+		1BC1D98F3369E6F04B5A452E /* SleepWakeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F967B3B5E8AC226CE8D23C /* SleepWakeMonitor.swift */; };
+		23A9F51BC79AEB5D4A62CB03 /* TunnelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6058F23042A8FB37E584A2 /* TunnelManager.swift */; };
+		27F8685CC1F3186A095379A3 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C123C710616123158E22010 /* Database.swift */; };
+		2B8B9FBF9249D7E003DF5C03 /* ReconnectPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE76774873B4DDA97708781 /* ReconnectPolicyTests.swift */; };
+		4FC3C858399EE01555C4CFC9 /* TunnelEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DDDF589D5381E365F601B87 /* TunnelEditorView.swift */; };
+		589DE3E69D3A03CAE5403C70 /* ReconnectPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025237E4B3DF2C6E602E0566 /* ReconnectPolicy.swift */; };
+		5ABF43C1C2541C0E97BE2BEE /* TunnelRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BBED9C2C7821F1EE7AC899 /* TunnelRepository.swift */; };
+		5CB8FA769CE75CAF2B535969 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FBC946D0D88F2B1A4C450B /* MainWindowView.swift */; };
+		66B1DF28261C509ED727A881 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498948024638D6DB84419DD /* SidebarView.swift */; };
+		6AF1E96E99C332DE0532F0F2 /* DirectiveHelpPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1851A8FF05868663C10BEDB /* DirectiveHelpPopover.swift */; };
+		6F2B879D9E381C88499EB2FA /* TunnelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B968C365E005AC5D8DB10B6E /* TunnelListView.swift */; };
+		92EF159C5EDA2B0FF4DB5413 /* SSHDirectives.json in Resources */ = {isa = PBXBuildFile; fileRef = F3A7FAF660ED2DF1C262E0E2 /* SSHDirectives.json */; };
+		92FD76120F12BD4D92390FB6 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A206323632673B668B438 /* Tag.swift */; };
+		BCB037E51C8B9553B4CDBE7D /* SSHCommandBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685C7A0ADB8A8F5B61752F9E /* SSHCommandBuilder.swift */; };
+		BE432C0143062476847CF684 /* AdvancedOptionsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A508EC1508573894347858A4 /* AdvancedOptionsEditor.swift */; };
+		BF9F76CE9D47E2CE5252F4C0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = B0DE5B6CA5754472E1504A49 /* GRDB */; };
+		CC22BB141D4A55598DFEF2B8 /* SSHCommandBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BDAA085418231058536EACF /* SSHCommandBuilderTests.swift */; };
+		CDAB451B8DF867CA5F123F1F /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8F007751F2B57BAE1FAA2C /* AppState.swift */; };
+		D1C4641EFAD2659DF7DEEF48 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F2676C4C4A70BB816052C9 /* NetworkMonitor.swift */; };
+		E621E6C385550E403F305068 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4F9060FC0C4D7D1F4DD0C2 /* StatusBarController.swift */; };
+		E63C2271404CD81A4A1584A2 /* TunnelProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602A26E0D20C1C2546A0D9CB /* TunnelProcess.swift */; };
+		E7440D2215748EFCBA27D467 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CF0C66D4D9D8BAB67B372A /* WindowManager.swift */; };
+		E8157F6270829B024B69D1E7 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391041B206F93DF21EFB899 /* MenuBarView.swift */; };
+		EA3152E77479187F398F4E95 /* TunnelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D104DF7CA7616847AA382D6B /* TunnelDetailView.swift */; };
+		ED4A5BBC553EBEBAFA69D002 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 601110B430235BA19F0F500E /* GRDB */; };
+		F815DFD741B8C88EA44E3D96 /* StatusDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0498D4626CC5E14F805552F2 /* StatusDot.swift */; };
+		FA4F4A5B4C56EB328D0EC1B8 /* OnePasswordAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6EC62A4DA5A2652303E608 /* OnePasswordAgent.swift */; };
+		FE39D2F22AEC1C4C331CDB1E /* ViaductApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732B6840A856859DE0CEA5A /* ViaductApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		18BD2DA306D7FF15545FC697 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 09E4D0EEC295AD42EF85A3EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF44307020060B6248DAED46;
+			remoteInfo = Viaduct;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		025237E4B3DF2C6E602E0566 /* ReconnectPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectPolicy.swift; sourceTree = "<group>"; };
+		0498D4626CC5E14F805552F2 /* StatusDot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusDot.swift; sourceTree = "<group>"; };
+		0DDDF589D5381E365F601B87 /* TunnelEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelEditorView.swift; sourceTree = "<group>"; };
+		1C4F9060FC0C4D7D1F4DD0C2 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		25F967B3B5E8AC226CE8D23C /* SleepWakeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepWakeMonitor.swift; sourceTree = "<group>"; };
+		2BDAA085418231058536EACF /* SSHCommandBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHCommandBuilderTests.swift; sourceTree = "<group>"; };
+		391B87F4FACD4BBEE9AEFEA7 /* Tunnel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tunnel.swift; sourceTree = "<group>"; };
+		4DE76774873B4DDA97708781 /* ReconnectPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectPolicyTests.swift; sourceTree = "<group>"; };
+		602A26E0D20C1C2546A0D9CB /* TunnelProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelProcess.swift; sourceTree = "<group>"; };
+		6391041B206F93DF21EFB899 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		63CF0C66D4D9D8BAB67B372A /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		65BBED9C2C7821F1EE7AC899 /* TunnelRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelRepository.swift; sourceTree = "<group>"; };
+		685C7A0ADB8A8F5B61752F9E /* SSHCommandBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHCommandBuilder.swift; sourceTree = "<group>"; };
+		6C123C710616123158E22010 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		833A206323632673B668B438 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
+		8B6EC62A4DA5A2652303E608 /* OnePasswordAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnePasswordAgent.swift; sourceTree = "<group>"; };
+		91F2676C4C4A70BB816052C9 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		9A8F007751F2B57BAE1FAA2C /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A1851A8FF05868663C10BEDB /* DirectiveHelpPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectiveHelpPopover.swift; sourceTree = "<group>"; };
+		A37C3C24384547982754F0EE /* Viaduct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Viaduct.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A508EC1508573894347858A4 /* AdvancedOptionsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedOptionsEditor.swift; sourceTree = "<group>"; };
+		ABB9B1D87BE5066EC74654B3 /* ViaductTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViaductTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B498948024638D6DB84419DD /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		B968C365E005AC5D8DB10B6E /* TunnelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelListView.swift; sourceTree = "<group>"; };
+		BC9764BAA8248B27E2FD7C43 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C567CE4487D678B70B91331C /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		C732B6840A856859DE0CEA5A /* ViaductApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViaductApp.swift; sourceTree = "<group>"; };
+		D104DF7CA7616847AA382D6B /* TunnelDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelDetailView.swift; sourceTree = "<group>"; };
+		D9FBC946D0D88F2B1A4C450B /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
+		E09DF662B2C248DE3EE19CAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E18DF850E973A844C2C5B1DF /* Viaduct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Viaduct.entitlements; sourceTree = "<group>"; };
+		F3A7FAF660ED2DF1C262E0E2 /* SSHDirectives.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SSHDirectives.json; sourceTree = "<group>"; };
+		F44CAB2A2C7847C56F24A5D6 /* ConnectionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionEvent.swift; sourceTree = "<group>"; };
+		FC6058F23042A8FB37E584A2 /* TunnelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B348EB69DD66972884C1D0F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED4A5BBC553EBEBAFA69D002 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D258EDF9DD3B5CFCF7068CEA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF9F76CE9D47E2CE5252F4C0 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		085C626C5FF443CD47D69871 = {
+			isa = PBXGroup;
+			children = (
+				EEF3ADF4B73892775A81216B /* Viaduct */,
+				712FBE859A5FF94C8ABA52C7 /* ViaductTests */,
+				7C0E8ABABEAAC589DEB809EA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		347BB6F8EF0707DFE3AA47E5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BC9764BAA8248B27E2FD7C43 /* Assets.xcassets */,
+				E09DF662B2C248DE3EE19CAC /* Info.plist */,
+				F3A7FAF660ED2DF1C262E0E2 /* SSHDirectives.json */,
+				E18DF850E973A844C2C5B1DF /* Viaduct.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4537ACD61FC4775CA94AEE36 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				C567CE4487D678B70B91331C /* KeychainService.swift */,
+				8B6EC62A4DA5A2652303E608 /* OnePasswordAgent.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		49DFF3F8F1841E9DCA14FBC5 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				91F2676C4C4A70BB816052C9 /* NetworkMonitor.swift */,
+				25F967B3B5E8AC226CE8D23C /* SleepWakeMonitor.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		712FBE859A5FF94C8ABA52C7 /* ViaductTests */ = {
+			isa = PBXGroup;
+			children = (
+				4DE76774873B4DDA97708781 /* ReconnectPolicyTests.swift */,
+				2BDAA085418231058536EACF /* SSHCommandBuilderTests.swift */,
+			);
+			name = ViaductTests;
+			path = Tests/ViaductTests;
+			sourceTree = "<group>";
+		};
+		77FA00008EF5B05E1BD1D5C6 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				6391041B206F93DF21EFB899 /* MenuBarView.swift */,
+				1C4F9060FC0C4D7D1F4DD0C2 /* StatusBarController.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		7C0E8ABABEAAC589DEB809EA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A37C3C24384547982754F0EE /* Viaduct.app */,
+				ABB9B1D87BE5066EC74654B3 /* ViaductTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7DC84F57877AB1D6003C3543 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B0950B59238F00431065B846 /* Components */,
+				9057D26D54677FED3B783D52 /* Editor */,
+				D1FED3C6DCF1F84A4DEDE82E /* MainWindow */,
+				77FA00008EF5B05E1BD1D5C6 /* MenuBar */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		8A8F6A56D00296991F5E99EC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F44CAB2A2C7847C56F24A5D6 /* ConnectionEvent.swift */,
+				833A206323632673B668B438 /* Tag.swift */,
+				391B87F4FACD4BBEE9AEFEA7 /* Tunnel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9057D26D54677FED3B783D52 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				A508EC1508573894347858A4 /* AdvancedOptionsEditor.swift */,
+				0DDDF589D5381E365F601B87 /* TunnelEditorView.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		A3B82BFF01EE29DD3F17427F /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				6C123C710616123158E22010 /* Database.swift */,
+				65BBED9C2C7821F1EE7AC899 /* TunnelRepository.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		B0950B59238F00431065B846 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A1851A8FF05868663C10BEDB /* DirectiveHelpPopover.swift */,
+				0498D4626CC5E14F805552F2 /* StatusDot.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		D1FED3C6DCF1F84A4DEDE82E /* MainWindow */ = {
+			isa = PBXGroup;
+			children = (
+				D9FBC946D0D88F2B1A4C450B /* MainWindowView.swift */,
+				B498948024638D6DB84419DD /* SidebarView.swift */,
+				D104DF7CA7616847AA382D6B /* TunnelDetailView.swift */,
+				B968C365E005AC5D8DB10B6E /* TunnelListView.swift */,
+			);
+			path = MainWindow;
+			sourceTree = "<group>";
+		};
+		EEF3ADF4B73892775A81216B /* Viaduct */ = {
+			isa = PBXGroup;
+			children = (
+				F8AD51E158C6AD9B1B0FEC0C /* App */,
+				4537ACD61FC4775CA94AEE36 /* Auth */,
+				8A8F6A56D00296991F5E99EC /* Models */,
+				49DFF3F8F1841E9DCA14FBC5 /* Network */,
+				A3B82BFF01EE29DD3F17427F /* Persistence */,
+				347BB6F8EF0707DFE3AA47E5 /* Resources */,
+				FA5ED6F593F249991992DD88 /* Tunnel */,
+				7DC84F57877AB1D6003C3543 /* UI */,
+			);
+			name = Viaduct;
+			path = Sources/Viaduct;
+			sourceTree = "<group>";
+		};
+		F8AD51E158C6AD9B1B0FEC0C /* App */ = {
+			isa = PBXGroup;
+			children = (
+				9A8F007751F2B57BAE1FAA2C /* AppState.swift */,
+				C732B6840A856859DE0CEA5A /* ViaductApp.swift */,
+				63CF0C66D4D9D8BAB67B372A /* WindowManager.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		FA5ED6F593F249991992DD88 /* Tunnel */ = {
+			isa = PBXGroup;
+			children = (
+				025237E4B3DF2C6E602E0566 /* ReconnectPolicy.swift */,
+				685C7A0ADB8A8F5B61752F9E /* SSHCommandBuilder.swift */,
+				FC6058F23042A8FB37E584A2 /* TunnelManager.swift */,
+				602A26E0D20C1C2546A0D9CB /* TunnelProcess.swift */,
+			);
+			path = Tunnel;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		38ACDD98CAC7D6D7BED9FBCF /* ViaductTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2CE1208D8B3BF7016E80E369 /* Build configuration list for PBXNativeTarget "ViaductTests" */;
+			buildPhases = (
+				32B6FD266DAB05BE8F00A150 /* Sources */,
+				D258EDF9DD3B5CFCF7068CEA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2F39F7983A74CFA268ACD971 /* PBXTargetDependency */,
+			);
+			name = ViaductTests;
+			packageProductDependencies = (
+				B0DE5B6CA5754472E1504A49 /* GRDB */,
+			);
+			productName = ViaductTests;
+			productReference = ABB9B1D87BE5066EC74654B3 /* ViaductTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FF44307020060B6248DAED46 /* Viaduct */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30E438FE7382C7E659C371C1 /* Build configuration list for PBXNativeTarget "Viaduct" */;
+			buildPhases = (
+				8447CB9A519BE4019124E3E9 /* Sources */,
+				2734418A22F3D57141CDDA1B /* Resources */,
+				B348EB69DD66972884C1D0F9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Viaduct;
+			packageProductDependencies = (
+				601110B430235BA19F0F500E /* GRDB */,
+			);
+			productName = Viaduct;
+			productReference = A37C3C24384547982754F0EE /* Viaduct.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		09E4D0EEC295AD42EF85A3EE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					38ACDD98CAC7D6D7BED9FBCF = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					FF44307020060B6248DAED46 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D62076400568A8551725B671 /* Build configuration list for PBXProject "Viaduct" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 085C626C5FF443CD47D69871;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FF44307020060B6248DAED46 /* Viaduct */,
+				38ACDD98CAC7D6D7BED9FBCF /* ViaductTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2734418A22F3D57141CDDA1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0002CF8788CEDF99B5166DA6 /* Assets.xcassets in Resources */,
+				92EF159C5EDA2B0FF4DB5413 /* SSHDirectives.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		32B6FD266DAB05BE8F00A150 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B8B9FBF9249D7E003DF5C03 /* ReconnectPolicyTests.swift in Sources */,
+				CC22BB141D4A55598DFEF2B8 /* SSHCommandBuilderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8447CB9A519BE4019124E3E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE432C0143062476847CF684 /* AdvancedOptionsEditor.swift in Sources */,
+				CDAB451B8DF867CA5F123F1F /* AppState.swift in Sources */,
+				0EA64430160AFCFABB5C86A1 /* ConnectionEvent.swift in Sources */,
+				27F8685CC1F3186A095379A3 /* Database.swift in Sources */,
+				6AF1E96E99C332DE0532F0F2 /* DirectiveHelpPopover.swift in Sources */,
+				08D9A2ED9145FE442C8A11DC /* KeychainService.swift in Sources */,
+				5CB8FA769CE75CAF2B535969 /* MainWindowView.swift in Sources */,
+				E8157F6270829B024B69D1E7 /* MenuBarView.swift in Sources */,
+				D1C4641EFAD2659DF7DEEF48 /* NetworkMonitor.swift in Sources */,
+				FA4F4A5B4C56EB328D0EC1B8 /* OnePasswordAgent.swift in Sources */,
+				589DE3E69D3A03CAE5403C70 /* ReconnectPolicy.swift in Sources */,
+				BCB037E51C8B9553B4CDBE7D /* SSHCommandBuilder.swift in Sources */,
+				66B1DF28261C509ED727A881 /* SidebarView.swift in Sources */,
+				1BC1D98F3369E6F04B5A452E /* SleepWakeMonitor.swift in Sources */,
+				E621E6C385550E403F305068 /* StatusBarController.swift in Sources */,
+				F815DFD741B8C88EA44E3D96 /* StatusDot.swift in Sources */,
+				92FD76120F12BD4D92390FB6 /* Tag.swift in Sources */,
+				00D9B0CE57399A8F67EA70F1 /* Tunnel.swift in Sources */,
+				EA3152E77479187F398F4E95 /* TunnelDetailView.swift in Sources */,
+				4FC3C858399EE01555C4CFC9 /* TunnelEditorView.swift in Sources */,
+				6F2B879D9E381C88499EB2FA /* TunnelListView.swift in Sources */,
+				23A9F51BC79AEB5D4A62CB03 /* TunnelManager.swift in Sources */,
+				E63C2271404CD81A4A1584A2 /* TunnelProcess.swift in Sources */,
+				5ABF43C1C2541C0E97BE2BEE /* TunnelRepository.swift in Sources */,
+				FE39D2F22AEC1C4C331CDB1E /* ViaductApp.swift in Sources */,
+				E7440D2215748EFCBA27D467 /* WindowManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2F39F7983A74CFA268ACD971 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF44307020060B6248DAED46 /* Viaduct */;
+			targetProxy = 18BD2DA306D7FF15545FC697 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0C06BAF5B790747B1F822EB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		0ED79ED8DB021E9B653B66A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.ViaductTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Viaduct.app/Contents/MacOS/Viaduct";
+			};
+			name = Debug;
+		};
+		550D98001AE3AE3ED75560DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.ViaductTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Viaduct.app/Contents/MacOS/Viaduct";
+			};
+			name = Release;
+		};
+		6DF09EFEE50E015232BD4414 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		CB3378B6A83660EB43B56297 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/Viaduct/Resources/Viaduct.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/Viaduct/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.Viaduct;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+			};
+			name = Debug;
+		};
+		FCF15DB3DA70C34490D9AF88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/Viaduct/Resources/Viaduct.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Sources/Viaduct/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.Viaduct;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2CE1208D8B3BF7016E80E369 /* Build configuration list for PBXNativeTarget "ViaductTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0ED79ED8DB021E9B653B66A1 /* Debug */,
+				550D98001AE3AE3ED75560DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		30E438FE7382C7E659C371C1 /* Build configuration list for PBXNativeTarget "Viaduct" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB3378B6A83660EB43B56297 /* Debug */,
+				FCF15DB3DA70C34490D9AF88 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D62076400568A8551725B671 /* Build configuration list for PBXProject "Viaduct" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6DF09EFEE50E015232BD4414 /* Debug */,
+				0C06BAF5B790747B1F822EB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		601110B430235BA19F0F500E /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+		B0DE5B6CA5754472E1504A49 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 09E4D0EEC295AD42EF85A3EE /* Project object */;
+}
