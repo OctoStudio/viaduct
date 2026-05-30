@@ -93,11 +93,11 @@ struct TunnelListView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 8)
-            .frame(height: 26)
-            .background(ViaductStyle.input, in: RoundedRectangle(cornerRadius: 6))
+            .padding(.horizontal, 12)
+            .frame(height: 38)
+            .background(ViaductStyle.input, in: RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner))
             .overlay {
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner)
                     .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
             }
 
@@ -121,9 +121,9 @@ struct TunnelListView: View {
                         .font(.system(size: 8, weight: .semibold))
                 }
                 .foregroundStyle(.secondary)
-                .frame(height: 24)
-                .padding(.horizontal, 6)
-                .background(ViaductStyle.surface, in: RoundedRectangle(cornerRadius: 5))
+                .frame(height: 34)
+                .padding(.horizontal, 9)
+                .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
             }
             .menuStyle(.button)
             .buttonStyle(.plain)
@@ -134,16 +134,16 @@ struct TunnelListView: View {
             }) {
                 Image(systemName: "plus")
                     .font(.system(size: 13, weight: .medium))
-                    .frame(width: 24, height: 22)
-                    .background(ViaductStyle.surface, in: RoundedRectangle(cornerRadius: 5))
+                    .frame(width: 34, height: 34)
+                    .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
             }
             .buttonStyle(.plain)
             .help("New Tunnel (⌘N)")
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 22)
         .frame(height: ViaductStyle.titlebarHeight)
         .background(ViaductStyle.titlebarBackground)
-        .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+        .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairlineSoft).frame(height: 0.5) }
     }
 
     // MARK: - Footer
@@ -156,8 +156,8 @@ struct TunnelListView: View {
             Spacer()
         }
         .frame(height: 24)
-        .padding(.horizontal, 12)
-        .overlay(alignment: .top) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+        .padding(.horizontal, 22)
+        .overlay(alignment: .top) { Rectangle().fill(ViaductStyle.hairlineSoft).frame(height: 0.5) }
     }
 
     // MARK: - Empty state
@@ -222,28 +222,28 @@ struct TunnelListRow: View {
         let state = tunnelManager.state(for: tunnel.id)
         let running = isRunning(state)
 
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: 14) {
             StatusDot(state: state)
-                .padding(.top, 4)
+                .padding(.top, 8)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(tunnel.name)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 19, weight: .bold))
                         .lineLimit(1)
                     Spacer(minLength: 0)
                     TypeChip(type: tunnel.type, isSelected: isSelected)
                 }
 
                 Text(compactRoute)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(isSelected ? .white.opacity(0.84) : .secondary)
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
                     .lineLimit(1)
 
                 HStack(spacing: 5) {
                     Text(tunnel.host)
                         .font(.system(size: 10.5))
-                        .foregroundStyle(isSelected ? .white.opacity(0.70) : Color(.tertiaryLabelColor))
+                        .foregroundStyle(Color(.tertiaryLabelColor))
                     stateInfo(state, isSelected: isSelected)
                 }
             }
@@ -253,20 +253,28 @@ struct TunnelListRow: View {
             Button { AppState.shared.toggleTunnel(tunnel) } label: {
                 Image(systemName: running ? "stop.fill" : "play.fill")
                     .font(.system(size: 8, weight: .medium))
-                    .foregroundStyle(isSelected ? .white : (running ? ViaductStyle.danger : ViaductStyle.accent))
+                    .foregroundStyle(running ? ViaductStyle.danger : ViaductStyle.accent)
                     .frame(width: 22, height: 22)
                     .background {
                         Circle()
-                            .fill(isSelected ? Color.white.opacity(0.22) : (running ? ViaductStyle.danger.opacity(0.12) : ViaductStyle.accent.opacity(0.12)))
+                            .fill(running ? ViaductStyle.danger.opacity(0.12) : ViaductStyle.accent.opacity(0.12))
                     }
             }
             .buttonStyle(.plain)
             .contentShape(Circle())
         }
-        .foregroundStyle(isSelected ? .white : .primary)
-        .padding(.vertical, 10)
-        .padding(.horizontal, 14)
-        .background(isSelected ? ViaductStyle.accent : Color.clear)
+        .foregroundStyle(.primary)
+        .padding(.vertical, 18)
+        .padding(.horizontal, 20)
+        .background(isSelected ? ViaductStyle.selectedListBackground : Color.clear, in: RoundedRectangle(cornerRadius: 10))
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(ViaductStyle.selectedListBorder, lineWidth: 1)
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 4)
     }
 
     private var compactRoute: String {
@@ -290,28 +298,28 @@ struct TunnelListRow: View {
         switch state {
         case .connected:
             if let connectedAt = tunnelManager.connectedAt(for: tunnel.id) {
-                Text("·").font(.system(size: 10.5)).foregroundStyle(isSelected ? .white.opacity(0.45) : Color(.quaternaryLabelColor))
+                Text("·").font(.system(size: 10.5)).foregroundStyle(Color(.quaternaryLabelColor))
                 TimelineView(.periodic(from: connectedAt, by: 60)) { ctx in
                     Text("up \(formatUptime(from: connectedAt, to: ctx.date))")
                         .font(.system(size: 10.5).monospacedDigit())
-                        .foregroundStyle(isSelected ? .white.opacity(0.70) : Color(.tertiaryLabelColor))
+                        .foregroundStyle(Color(.tertiaryLabelColor))
                 }
             }
         case .connecting:
-            Text("·").font(.system(size: 10.5)).foregroundStyle(isSelected ? .white.opacity(0.45) : Color(.quaternaryLabelColor))
+            Text("·").font(.system(size: 10.5)).foregroundStyle(Color(.quaternaryLabelColor))
             Text("Connecting…")
                 .font(.system(size: 10.5))
-                .foregroundStyle(isSelected ? Color(red: 1.0, green: 0.89, blue: 0.72) : ViaductStyle.warning)
+                .foregroundStyle(ViaductStyle.warning)
         case .reconnecting(let n):
-            Text("·").font(.system(size: 10.5)).foregroundStyle(isSelected ? .white.opacity(0.45) : Color(.quaternaryLabelColor))
+            Text("·").font(.system(size: 10.5)).foregroundStyle(Color(.quaternaryLabelColor))
             Text("Reconnecting (attempt \(n))…")
                 .font(.system(size: 10.5))
-                .foregroundStyle(isSelected ? Color(red: 1.0, green: 0.89, blue: 0.72) : ViaductStyle.warning)
+                .foregroundStyle(ViaductStyle.warning)
         case .failed:
-            Text("·").font(.system(size: 10.5)).foregroundStyle(isSelected ? .white.opacity(0.45) : Color(.quaternaryLabelColor))
+            Text("·").font(.system(size: 10.5)).foregroundStyle(Color(.quaternaryLabelColor))
             Text("Connection failed")
                 .font(.system(size: 10.5, weight: .medium))
-                .foregroundStyle(isSelected ? Color(red: 1.0, green: 0.82, blue: 0.81) : ViaductStyle.danger)
+                .foregroundStyle(ViaductStyle.danger)
         default:
             EmptyView()
         }
@@ -334,8 +342,8 @@ struct TypeChip: View {
             .tracking(0.3)
             .padding(.horizontal, 6)
             .padding(.vertical, 1.5)
-            .background(isSelected ? Color.white.opacity(0.18) : ViaductStyle.chip)
-            .foregroundStyle(isSelected ? .white : .secondary)
+            .background(isSelected ? Color.white.opacity(0.32) : ViaductStyle.chip)
+            .foregroundStyle(.secondary)
             .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }

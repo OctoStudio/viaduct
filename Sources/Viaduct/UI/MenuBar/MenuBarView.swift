@@ -24,15 +24,17 @@ struct MenuBarView: View {
     var body: some View {
         VStack(spacing: 0) {
             menuHeader
-            Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5)
             searchBar
-            Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5)
             tunnelList
-            Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5)
             menuFooter
         }
-        .frame(width: 320)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .padding(28)
+        .frame(width: 400)
+        .background(ViaductStyle.detailBackground, in: RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(ViaductStyle.hairline, lineWidth: 1)
+        }
         .preferredColorScheme(AppAppearance(rawValue: appearance)?.colorScheme)
         .onAppear { appState.reload() }
     }
@@ -40,24 +42,24 @@ struct MenuBarView: View {
     // MARK: - Header
 
     private var menuHeader: some View {
-        HStack(spacing: 8) {
-            RoundedRectangle(cornerRadius: 5)
-                .fill(ViaductStyle.accent)
-                .frame(width: 18, height: 18)
-                .overlay {
-                    Image(systemName: "network")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
+        HStack(spacing: 12) {
 
             Text("Viaduct")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 22, weight: .bold))
 
             Spacer()
 
-            Text("\(connectedCount)/\(appState.tunnels.count) active")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Circle().fill(ViaductStyle.success).frame(width: 8, height: 8)
+                Text("\(connectedCount) live")
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .textCase(.uppercase)
+            }
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 13)
+            .frame(height: 32)
+            .background(ViaductStyle.tagGreenBackground, in: Capsule())
+            .overlay { Capsule().strokeBorder(ViaductStyle.success.opacity(0.25), lineWidth: 1) }
 
             Button(action: { WindowManager.shared.openMain() }) {
                 Image(systemName: "arrow.up.right.square")
@@ -67,8 +69,7 @@ struct MenuBarView: View {
             .buttonStyle(.plain)
             .help("Open Viaduct")
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.bottom, 20)
     }
 
     // MARK: - Search
@@ -89,9 +90,14 @@ struct MenuBarView: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(Color(.controlBackgroundColor).opacity(0.18))
+        .padding(.horizontal, 18)
+        .frame(height: 42)
+        .background(ViaductStyle.input, in: RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner))
+        .overlay {
+            RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner)
+                .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
+        }
+        .padding(.bottom, 18)
     }
 
     // MARK: - Tunnel list
@@ -122,44 +128,53 @@ struct MenuBarView: View {
                             Rectangle()
                                 .fill(ViaductStyle.hairline)
                                 .frame(height: 0.5)
-                                .padding(.leading, 40)
                         }
                     }
                 }
             }
         }
-        .frame(maxHeight: 340)
+        .frame(maxHeight: 500)
     }
 
     // MARK: - Footer
 
     private var menuFooter: some View {
-        HStack {
+        HStack(spacing: 16) {
             Button(action: { WindowManager.shared.openNewTunnelEditor() }) {
-                Label("New Tunnel", systemImage: "plus")
-                    .font(.system(size: 11.5))
+                Text("New Tunnel")
+                    .font(.system(size: 14, weight: .bold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 42)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(ViaductStyle.accent)
-
-            Spacer()
+            .foregroundStyle(.white)
+            .background(ViaductStyle.accent, in: RoundedRectangle(cornerRadius: 8))
 
             Button {
-                WindowManager.shared.openSettingsPage()
+                WindowManager.shared.openMain()
             } label: {
-                Text("Settings")
-                    .font(.system(size: 11.5))
-                    .foregroundStyle(.secondary)
+                Text("Open App")
+                    .font(.system(size: 14, weight: .medium))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 42)
             }
             .buttonStyle(.plain)
+            .foregroundStyle(.primary)
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
+            }
 
-            Button("Quit") { NSApp.terminate(nil) }
-                .buttonStyle(.plain)
-                .font(.system(size: 11.5))
-                .foregroundStyle(.secondary)
+            Button(action: { NSApp.terminate(nil) }) {
+                Image(systemName: "power")
+                    .font(.system(size: 13, weight: .semibold))
+                    .frame(width: 42, height: 42)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.top, 18)
     }
 
     // MARK: - Helpers
@@ -172,6 +187,7 @@ struct MenuBarView: View {
         case .allStopped:   return Color(.tertiaryLabelColor)
         }
     }
+
 }
 
 struct MenuBarTunnelRow: View {
@@ -184,37 +200,52 @@ struct MenuBarTunnelRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 16) {
             StatusDot(state: state)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(tunnel.name)
-                    .font(.system(size: 12.5, weight: .semibold))
+                    .font(.system(size: 16, weight: .bold))
                     .lineLimit(1)
                 Text(compactRoute)
-                    .font(.system(size: 10.5, design: .monospaced))
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
 
             Spacer()
 
-            Button(isRunning ? "Stop" : "Connect") {
+            Button(buttonTitle) {
                 AppState.shared.toggleTunnel(tunnel)
             }
             .buttonStyle(.plain)
-            .font(.system(size: 11, weight: .semibold))
-            .foregroundStyle(isRunning ? ViaductStyle.danger : ViaductStyle.accent)
-            .padding(.horizontal, 10)
-            .frame(height: 22)
+            .font(.system(size: 11, weight: .bold, design: .monospaced))
+            .foregroundStyle(buttonColor)
+            .textCase(.uppercase)
+            .padding(.horizontal, 16)
+            .frame(height: 34)
             .background {
                 Capsule()
-                    .fill(isRunning ? ViaductStyle.danger.opacity(0.12) : ViaductStyle.accent.opacity(0.12))
+                    .fill(buttonColor.opacity(0.10))
             }
+            .overlay { Capsule().strokeBorder(buttonColor.opacity(0.22), lineWidth: 0.8) }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.vertical, 18)
         .contentShape(Rectangle())
+    }
+
+    private var buttonTitle: String {
+        switch state {
+        case .reconnecting, .failed: return "Retry"
+        default: return isRunning ? "Stop" : "Start"
+        }
+    }
+
+    private var buttonColor: Color {
+        switch state {
+        case .reconnecting, .failed: return ViaductStyle.warning
+        default: return isRunning ? ViaductStyle.danger : ViaductStyle.accent
+        }
     }
 
     private var compactRoute: String {

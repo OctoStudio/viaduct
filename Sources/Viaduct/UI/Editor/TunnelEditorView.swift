@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Editor primitives
 
-private let kLabelWidth: CGFloat = 116
+private let kLabelWidth: CGFloat = 128
 
 struct EditorSection<Content: View>: View {
     var title: String? = nil
@@ -12,17 +12,17 @@ struct EditorSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 0) {
             if let title {
                 Text(title.uppercased())
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .foregroundStyle(.tertiary)
-                    .tracking(0.5)
+                    .tracking(0.8)
                     .padding(.leading, 4)
-                    .padding(.bottom, 5)
+                    .padding(.bottom, 10)
             }
             VStack(spacing: 0) {
                 content
             }
-            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8)
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner))
+            .overlay(RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner)
                 .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5))
         }
     }
@@ -49,8 +49,8 @@ struct EditorRow<Content: View>: View {
             content
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(minHeight: 34)
-        .padding(.horizontal, 12)
+        .frame(minHeight: 52)
+        .padding(.horizontal, 16)
     }
 }
 
@@ -58,7 +58,7 @@ struct EditorDivider: View {
     var body: some View {
         ViaductStyle.hairline
             .frame(height: 0.5)
-            .padding(.leading, kLabelWidth + 24)
+            .padding(.leading, kLabelWidth + 32)
     }
 }
 
@@ -131,11 +131,7 @@ struct TunnelEditorView: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    identitySection
-                    forwardingSection
-                    sshSection
-                    authSection
-                    behaviorSection
+                    editorGrid
                     if !appState.tags.isEmpty { tagsSection }
                     DisclosureGroup(isExpanded: $showAdvanced) {
                         advancedSection.padding(.top, 6)
@@ -148,11 +144,11 @@ struct TunnelEditorView: View {
                         validationBanner(msg)
                     }
                 }
-                .padding(20)
+                .padding(32)
             }
         }
-        .frame(width: 520)
-        .frame(minHeight: 540)
+        .frame(width: 1360)
+        .frame(minHeight: 660)
         .onAppear {
             if let id = existingID {
                 let tags = (try? TunnelRepository().fetchTags(forTunnel: id)) ?? []
@@ -171,6 +167,257 @@ struct TunnelEditorView: View {
         }
     }
 
+    private var editorGrid: some View {
+        HStack(alignment: .top, spacing: 58) {
+            VStack(alignment: .leading, spacing: 30) {
+                identityPanel
+                forwardingPanel
+                Divider().background(ViaductStyle.hairlineSoft)
+                sshPanel
+            }
+            .frame(width: 850)
+
+            VStack(alignment: .leading, spacing: 34) {
+                authPanel
+                behaviorPanel
+            }
+            .frame(width: 350)
+        }
+    }
+
+    @ViewBuilder
+    private var identityPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            editorSectionTitle("Identity")
+            HStack(spacing: 18) {
+                editorField(width: 500, invalid: nameInvalid) {
+                    TextField("My Tunnel", text: $name)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 18, weight: .semibold))
+                        .focused($focusedField, equals: .name)
+                        .onChange(of: name) { _, _ in nameInvalid = false }
+                }
+
+                editorField(width: 332) {
+                    Picker("", selection: $type) {
+                        Text("Local").tag(TunnelType.local)
+                        Text("Remote").tag(TunnelType.remote)
+                        Text("Dynamic (SOCKS5)").tag(TunnelType.dynamic)
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var forwardingPanel: some View {
+        switch type {
+        case .local:
+            VStack(alignment: .leading, spacing: 24) {
+                HStack(alignment: .top, spacing: 26) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        editorSectionTitle("On This Mac")
+                        HStack(spacing: 16) {
+                            editorField(width: 220) {
+                                TextField("127.0.0.1", text: $bindAddress)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 17, weight: .semibold))
+                            }
+                            editorField(width: 126, invalid: localPortInvalid) {
+                                portTextField($localPort, placeholder: "5432", field: .localPort)
+                                    .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                                    .onChange(of: localPort) { _, _ in localPortInvalid = false }
+                            }
+                        }
+                    }
+
+                    editorArrow.padding(.top, 48)
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        editorSectionTitle("Forward To")
+                        HStack(spacing: 16) {
+                            editorField(width: 220, invalid: remoteHostInvalid) {
+                                TextField("db.internal", text: $remoteHost)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .focused($focusedField, equals: .remoteHost)
+                                    .onChange(of: remoteHost) { _, _ in remoteHostInvalid = false }
+                            }
+                            editorField(width: 126, invalid: remotePortInvalid) {
+                                portTextField($remotePort, placeholder: "5432", field: .remotePort)
+                                    .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                                    .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
+                            }
+                        }
+                    }
+                }
+            }
+        case .remote:
+            VStack(alignment: .leading, spacing: 24) {
+                HStack(alignment: .top, spacing: 26) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        editorSectionTitle("On Remote Server")
+                        editorField(width: 220, invalid: remotePortInvalid) {
+                            portTextField($remotePort, placeholder: "9090", field: .remotePort)
+                                .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                                .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
+                        }
+                    }
+
+                    editorArrow.padding(.top, 48)
+
+                    VStack(alignment: .leading, spacing: 14) {
+                        editorSectionTitle("Forward To")
+                        HStack(spacing: 16) {
+                            editorField(width: 220) {
+                                TextField("127.0.0.1", text: $bindAddress)
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 17, weight: .semibold))
+                            }
+                            editorField(width: 126, invalid: localPortInvalid) {
+                                portTextField($localPort, placeholder: "9090", field: .localPort)
+                                    .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                                    .onChange(of: localPort) { _, _ in localPortInvalid = false }
+                            }
+                        }
+                    }
+                }
+            }
+        case .dynamic:
+            VStack(alignment: .leading, spacing: 14) {
+                editorSectionTitle("SOCKS5 Proxy")
+                HStack(spacing: 16) {
+                    editorField(width: 220) {
+                        TextField("127.0.0.1", text: $bindAddress)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 17, weight: .semibold))
+                    }
+                    editorField(width: 126, invalid: localPortInvalid) {
+                        portTextField($localPort, placeholder: "1080", field: .localPort)
+                            .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                            .onChange(of: localPort) { _, _ in localPortInvalid = false }
+                    }
+                }
+            }
+        }
+    }
+
+    private var sshPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            editorSectionTitle("SSH Server")
+            HStack(spacing: 16) {
+                editorField(width: 390, invalid: hostInvalid) {
+                    TextField("ssh.example.com", text: $host)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 17, weight: .semibold))
+                        .focused($focusedField, equals: .host)
+                        .onChange(of: host) { _, _ in hostInvalid = false }
+                }
+                editorField(width: 210) {
+                    TextField(NSUserName(), text: $user)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 17, weight: .semibold))
+                        .focused($focusedField, equals: .user)
+                }
+                editorField(width: 120, invalid: portInvalid) {
+                    portTextField($port, placeholder: "22", field: .port)
+                        .font(.system(size: 17, weight: .semibold).monospacedDigit())
+                        .onChange(of: port) { _, _ in portInvalid = false }
+                }
+            }
+            editorField(width: 390) {
+                TextField("user@bastion:22", text: $proxyJump)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 17, weight: .semibold))
+            }
+        }
+    }
+
+    private var authPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            editorSectionTitle("Authentication")
+            editorField(width: 350) {
+                HStack(spacing: 10) {
+                    Circle().fill(ViaductStyle.success).frame(width: 10, height: 10)
+                    Picker("", selection: $authMethod) {
+                        Text("System ssh-agent").tag(AuthMethod.systemAgent)
+                        if OnePasswordAgent.isAvailable {
+                            Text("1Password Agent").tag(AuthMethod.onePasswordAgent)
+                        }
+                    }
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            editorField(width: 350) {
+                HStack(spacing: 10) {
+                    TextField("~/.ssh/id_ed25519", text: $identityFile)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 15, weight: .semibold))
+                    Button("Browse…") { showIdentityFilePicker = true }
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(.secondary)
+                        .fixedSize()
+                }
+            }
+            Toggle("Agent forwarding", isOn: $agentForwarding)
+                .font(.system(size: 15, weight: .semibold))
+                .toggleStyle(.checkbox)
+                .padding(.top, 2)
+        }
+    }
+
+    private var behaviorPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            editorSectionTitle("Behavior")
+            Toggle("Auto-connect", isOn: $autoConnect)
+                .font(.system(size: 18, weight: .bold))
+                .toggleStyle(.checkbox)
+                .padding(.vertical, 10)
+            editorField(width: 350) {
+                HStack {
+                    Text("Host Key Check")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Picker("", selection: $strictHostChecking) {
+                        ForEach(StrictHostChecking.allCases, id: \.self) {
+                            Text($0.rawValue).tag($0)
+                        }
+                    }
+                    .labelsHidden()
+                    .frame(width: 150)
+                }
+            }
+        }
+    }
+
+    private func editorSectionTitle(_ title: String) -> some View {
+        Text(title.uppercased())
+            .font(.system(size: 12, weight: .bold, design: .monospaced))
+            .foregroundStyle(.tertiary)
+            .tracking(0.8)
+    }
+
+    private func editorField<Content: View>(width: CGFloat, height: CGFloat = 58, invalid: Bool = false, @ViewBuilder content: () -> Content) -> some View {
+        content()
+            .padding(.horizontal, 20)
+            .frame(width: width, height: height, alignment: .leading)
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner))
+            .overlay {
+                RoundedRectangle(cornerRadius: ViaductStyle.fieldCorner)
+                    .strokeBorder(invalid ? ViaductStyle.danger.opacity(0.75) : ViaductStyle.hairline, lineWidth: invalid ? 1.2 : 0.5)
+            }
+    }
+
+    private var editorArrow: some View {
+        Image(systemName: "arrow.right")
+            .font(.system(size: 36, weight: .bold))
+            .foregroundStyle(ViaductStyle.accent)
+            .frame(width: 62)
+    }
+
     // MARK: - Toolbar
 
     private var editorToolbar: some View {
@@ -187,7 +434,7 @@ struct TunnelEditorView: View {
                 .disabled(!isValid)
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.vertical, 14)
         .background(.bar)
     }
 
@@ -212,7 +459,7 @@ struct TunnelEditorView: View {
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .frame(maxWidth: 300)
+                .frame(maxWidth: 360)
             }
         }
     }
@@ -316,7 +563,7 @@ struct TunnelEditorView: View {
                         .font(.callout)
                         .foregroundStyle(.secondary)
                     portTextField($port, placeholder: "22", field: .port)
-                        .frame(width: 52)
+                        .frame(width: 72)
                         .underlineOnError(portInvalid)
                         .onChange(of: port) { _, _ in portInvalid = false }
                 }
@@ -347,7 +594,7 @@ struct TunnelEditorView: View {
                     }
                 }
                 .labelsHidden()
-                .frame(maxWidth: 220)
+                .frame(width: 260)
             }
             EditorDivider()
             EditorRow(label: "Identity File") {
@@ -358,6 +605,7 @@ struct TunnelEditorView: View {
                         .buttonStyle(.borderless)
                         .foregroundStyle(.secondary)
                         .font(.callout)
+                        .fixedSize()
                 }
             }
             EditorDivider()
@@ -383,7 +631,7 @@ struct TunnelEditorView: View {
                     }
                 }
                 .labelsHidden()
-                .frame(maxWidth: 160)
+                .frame(width: 180)
             }
         }
     }

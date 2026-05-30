@@ -2,28 +2,39 @@ import SwiftUI
 import AppKit
 
 enum ViaductStyle {
-    static let sidebarWidth: CGFloat = 220
-    static let listWidth: CGFloat = 340
-    static let titlebarHeight: CGFloat = 50
+    static let sidebarWidth: CGFloat = 250
+    static let listWidth: CGFloat = 390
+    static let titlebarHeight: CGFloat = 64
 
-    static let accent = Color(red: 0.04, green: 0.52, blue: 1.0)
-    static let success = Color(red: 0.16, green: 0.71, blue: 0.26)
-    static let warning = Color(red: 0.89, green: 0.54, blue: 0.0)
-    static let danger = Color(red: 0.90, green: 0.25, blue: 0.23)
+    static let accent = adaptiveColor(dark: 0x5b8cff, light: 0x1f5fff)
+    static let success = adaptiveColor(dark: 0x36c869, light: 0x1f9d4d)
+    static let warning = adaptiveColor(dark: 0xf0a330, light: 0xe08a00)
+    static let danger = adaptiveColor(dark: 0xff5b50, light: 0xd6342b)
     static let muted = Color(.tertiaryLabelColor)
 
-    static let hairline = Color(.separatorColor).opacity(0.55)
-    static let surface = Color.primary.opacity(0.035)
-    static let surfaceHover = Color.primary.opacity(0.055)
-    static let surfaceActive = Color.primary.opacity(0.085)
-    static let chip = Color.primary.opacity(0.055)
-    static let input = Color.primary.opacity(0.045)
+    static let hairline = adaptiveColor(dark: 0x363a44, light: 0xdedacf)
+    static let hairlineSoft = adaptiveColor(dark: 0x292d36, light: 0xebe7dc)
+    static let surface = adaptiveColor(dark: 0x20242c, light: 0xf3f1ea)
+    static let surfaceHover = adaptiveColor(dark: 0x292e38, light: 0xebeefa)
+    static let surfaceActive = adaptiveColor(dark: 0x31394a, light: 0xe9eefc)
+    static let chip = adaptiveColor(dark: 0x2a303b, light: 0xf3f1ea)
+    static let input = adaptiveColor(dark: 0x171b22, light: 0xf7f5ee)
 
-    static let sidebarBackground = adaptiveColor(dark: 0x1d1d1f, light: 0xf3f6fa)
-    static let listBackground = adaptiveColor(dark: 0x1b1b1d, light: 0xf8f8fa)
-    static let detailBackground = adaptiveColor(dark: 0x202022, light: 0xffffff)
-    static let titlebarBackground = adaptiveColor(dark: 0x242427, light: 0xfbfbfc)
-    static let cardBackground = adaptiveColor(dark: 0x2a2a2d, light: 0xfbfbfc)
+    static let windowBackground = adaptiveColor(dark: 0x0f1218, light: 0xeceadf)
+    static let sidebarBackground = adaptiveColor(dark: 0x151922, light: 0xf3f1ea)
+    static let listBackground = adaptiveColor(dark: 0x11151c, light: 0xfbfaf6)
+    static let detailBackground = adaptiveColor(dark: 0x0f1218, light: 0xfffef9)
+    static let titlebarBackground = adaptiveColor(dark: 0x121720, light: 0xf7f5ee)
+    static let cardBackground = adaptiveColor(dark: 0x171b22, light: 0xfffef9)
+    static let commandBackground = adaptiveColor(dark: 0x090c12, light: 0x15171c)
+    static let selectedListBackground = adaptiveColor(dark: 0x1d2947, light: 0xe9eefc)
+    static let selectedListBorder = adaptiveColor(dark: 0x36548c, light: 0xb8c9ff)
+    static let tagGreenBackground = adaptiveColor(dark: 0x14251d, light: 0xedf7f0)
+    static let tagAmberBackground = adaptiveColor(dark: 0x2a2112, light: 0xfff4dd)
+    static let tagBlueBackground = adaptiveColor(dark: 0x172033, light: 0xeef3ff)
+
+    static let fieldCorner: CGFloat = 9
+    static let cardCorner: CGFloat = 10
 
     private static func adaptiveColor(dark: Int, light: Int) -> Color {
         Color(nsColor: NSColor(name: nil) { appearance in

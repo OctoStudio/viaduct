@@ -81,8 +81,8 @@ struct SidebarView: View {
             Image(systemName: "network")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .frame(width: 24, height: 22)
-                .background(ViaductStyle.surface, in: RoundedRectangle(cornerRadius: 5))
+                .frame(width: 28, height: 24)
+                .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 7))
 
             Text("\(connectedCount) of \(appState.tunnels.count) active")
                 .font(.system(size: 11))
@@ -97,18 +97,18 @@ struct SidebarView: View {
                 Image(systemName: "gearshape")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(appState.selectedSidebarItem == .settings ? .white : .secondary)
-                    .frame(width: 24, height: 22)
+                    .frame(width: 28, height: 24)
                     .background(
-                        appState.selectedSidebarItem == .settings ? ViaductStyle.accent : ViaductStyle.surface,
-                        in: RoundedRectangle(cornerRadius: 5)
+                        appState.selectedSidebarItem == .settings ? ViaductStyle.accent : ViaductStyle.cardBackground,
+                        in: RoundedRectangle(cornerRadius: 7)
                     )
             }
             .buttonStyle(.plain)
             .help("Settings")
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .overlay(alignment: .top) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+        .padding(.vertical, 10)
+        .overlay(alignment: .top) { Rectangle().fill(ViaductStyle.hairlineSoft).frame(height: 0.5) }
     }
 
     private func tagCount(_ tag: Tag) -> Int {
@@ -169,15 +169,15 @@ private struct SidebarButton: View {
                     Text("\(count)")
                         .font(.system(size: 11, weight: .medium))
                         .monospacedDigit()
-                        .foregroundStyle(isSelected ? .white.opacity(0.85) : Color(.tertiaryLabelColor))
+                        .foregroundStyle(Color(.tertiaryLabelColor))
                 }
             }
             .font(.system(size: 13, weight: .medium))
-            .foregroundStyle(isSelected ? .white : .primary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(isSelected ? ViaductStyle.accent : Color.clear, in: RoundedRectangle(cornerRadius: 6))
-            .contentShape(RoundedRectangle(cornerRadius: 6))
+            .foregroundStyle(isSelected ? .primary : .primary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(isSelected ? ViaductStyle.selectedListBackground : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
         .padding(.horizontal, 8)
@@ -192,7 +192,7 @@ private struct SidebarButton: View {
         } else if let systemImage {
             Image(systemName: systemImage)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(isSelected ? .white : tint)
+                .foregroundStyle(tint)
         }
     }
 }

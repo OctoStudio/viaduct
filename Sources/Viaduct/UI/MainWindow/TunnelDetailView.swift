@@ -22,17 +22,17 @@ struct TunnelDetailView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         statusBanner(tunnel)
                         metricTiles(tunnel)
-                            .padding(.top, 14)
-                            .padding(.bottom, 18)
+                            .padding(.top, 28)
+                            .padding(.bottom, 34)
+                        commandCard(tunnel)
+                        activityCard()
                         forwardingCard(tunnel)
                         connectionCard(tunnel)
                         authCard(tunnel)
-                        if showCommand { commandCard(tunnel) }
-                        activityCard()
                         tagsView(tunnel)
                     }
-                    .padding(.horizontal, 28)
-                    .padding(.top, 24)
+                    .padding(.horizontal, 46)
+                    .padding(.top, 34)
                     .padding(.bottom, 34)
                 }
             } else {
@@ -79,13 +79,6 @@ struct TunnelDetailView: View {
 
     private func detailTitleBar(_ tunnel: Tunnel) -> some View {
         HStack(spacing: 10) {
-            HStack(spacing: 8) {
-                Text(tunnel.name)
-                    .font(.system(size: 14, weight: .semibold))
-                    .lineLimit(1)
-                TypeChip(type: tunnel.type)
-            }
-
             Spacer()
 
             Button {
@@ -119,10 +112,10 @@ struct TunnelDetailView: View {
 
             settingsButton
         }
-        .padding(.horizontal, 18)
+        .padding(.horizontal, 24)
         .frame(height: ViaductStyle.titlebarHeight)
         .background(ViaductStyle.titlebarBackground)
-        .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+        .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairlineSoft).frame(height: 0.5) }
     }
 
     private var emptyTitleBar: some View {
@@ -153,62 +146,53 @@ struct TunnelDetailView: View {
     private func statusBanner(_ tunnel: Tunnel) -> some View {
         let state = tunnelManager.state(for: tunnel.id)
         let running = isRunning(state)
-        let accent = stateColor(state)
 
-        HStack(spacing: 14) {
-            Circle()
-                .fill(accent.opacity(0.12))
-                .frame(width: 36, height: 36)
-                .overlay { StatusDot(state: state, size: 12) }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(statusLabel(state))
-                    .font(.system(size: 14, weight: .semibold))
-                Text(statusSubtitle(tunnel, state: state))
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-
-            Spacer()
-
-            HStack(spacing: 6) {
-                Button { AppState.shared.toggleTunnel(tunnel) } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: running ? "stop.fill" : "play.fill")
-                            .font(.system(size: 9, weight: .semibold))
-                        Text(running ? "Stop" : "Connect")
-                            .font(.system(size: 12, weight: .semibold))
+        VStack(alignment: .leading, spacing: 24) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(spacing: 10) {
+                        Text(tunnel.name)
+                            .font(.system(size: 24, weight: .bold))
+                            .lineLimit(1)
+                        TypeChip(type: tunnel.type)
                     }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .frame(height: 26)
-                    .background(running ? ViaductStyle.danger : ViaductStyle.accent, in: RoundedRectangle(cornerRadius: 6))
-                    .shadow(color: (running ? ViaductStyle.danger : ViaductStyle.accent).opacity(0.3), radius: 2, y: 1)
+                    statusPill(state)
                 }
-                .buttonStyle(.plain)
 
-                Button { TunnelManager.shared.restart(tunnelID: tunnel.id) } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 11))
-                        .frame(width: 26, height: 26)
-                        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 6))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(Color(.separatorColor).opacity(0.6), lineWidth: 0.5)
+                Spacer()
+
+                HStack(spacing: 8) {
+                    Button { AppState.shared.toggleTunnel(tunnel) } label: {
+                        HStack(spacing: 7) {
+                            Image(systemName: running ? "stop.fill" : "play.fill")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text(running ? "Stop" : "Connect")
+                                .font(.system(size: 14, weight: .bold))
                         }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 18)
+                        .frame(height: 38)
+                        .background(running ? ViaductStyle.danger : ViaductStyle.accent, in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button { TunnelManager.shared.restart(tunnelID: tunnel.id) } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 13))
+                            .frame(width: 38, height: 38)
+                            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!running)
+                    .opacity(running ? 1 : 0.4)
                 }
-                .buttonStyle(.plain)
-                .disabled(!running)
-                .opacity(running ? 1 : 0.4)
             }
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
-        .background(accent.opacity(0.05), in: RoundedRectangle(cornerRadius: 12))
-        .overlay {
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(accent.opacity(0.20), lineWidth: 0.5)
+
+            routeDiagram(tunnel)
         }
     }
 
@@ -218,39 +202,30 @@ struct TunnelDetailView: View {
     private func metricTiles(_ tunnel: Tunnel) -> some View {
         let state = tunnelManager.state(for: tunnel.id)
 
-        HStack(spacing: 8) {
+        HStack(spacing: 20) {
             MetricTile(label: "Uptime") {
                 if case .connected = state, let connectedAt = tunnelManager.connectedAt(for: tunnel.id) {
                     TimelineView(.periodic(from: connectedAt, by: 60)) { ctx in
                         Text(formatUptime(from: connectedAt, to: ctx.date))
-                            .font(.system(size: 13, weight: .semibold).monospacedDigit())
+                            .font(.system(size: 22, weight: .bold).monospacedDigit())
                     }
                 } else {
                     Text("—")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(.tertiary)
                 }
             }
 
-            MetricTile(label: "Endpoint") {
-                Text(tunnel.endpointDescription ?? "—")
-                    .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                    .foregroundStyle(tunnel.endpointDescription == nil ? .tertiary : .primary)
+            MetricTile(label: "Retries") {
+                Text(retryLabel(state))
+                    .font(.system(size: 22, weight: .bold))
+                    .monospacedDigit()
             }
-
             MetricTile(label: "Auth") {
                 Text(authLabel(tunnel.authMethod))
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 22, weight: .bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
-            }
-
-            MetricTile(label: "Auto-Connect") {
-                Text(tunnel.autoConnect ? "On" : "Off")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(tunnel.autoConnect ? ViaductStyle.accent : .secondary)
             }
         }
     }
@@ -315,13 +290,16 @@ struct TunnelDetailView: View {
     @ViewBuilder
     private func commandCard(_ tunnel: Tunnel) -> some View {
         let cmd = effectiveCommand(for: tunnel)
-        DetailCard(title: "Effective Command", trailing: AnyView(CopyButton(value: cmd))) {
+        DetailCard(title: "SSH Command", trailing: AnyView(CopyButton(value: cmd))) {
             Text(cmd)
-                .font(.system(size: 11.5, design: .monospaced))
+                .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.white)
                 .textSelection(.enabled)
                 .lineSpacing(3)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(14)
+                .frame(minHeight: 76, alignment: .topLeading)
+                .padding(18)
+                .background(ViaductStyle.commandBackground, in: RoundedRectangle(cornerRadius: 9))
         }
     }
 
@@ -401,6 +379,78 @@ struct TunnelDetailView: View {
             }
             .padding(.top, 4)
         }
+    }
+
+    private func statusPill(_ state: TunnelState) -> some View {
+        HStack(spacing: 8) {
+            StatusDot(state: state, size: 8)
+            Text(statusLabel(state))
+                .font(.system(size: 13, weight: .medium, design: .monospaced))
+        }
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 14)
+        .frame(height: 30)
+        .background(stateColor(state).opacity(0.08), in: Capsule())
+        .overlay {
+            Capsule()
+                .strokeBorder(stateColor(state).opacity(0.35), lineWidth: 1)
+        }
+    }
+
+    private func routeDiagram(_ tunnel: Tunnel) -> some View {
+        let endpoints = routeEndpoints(tunnel)
+        return HStack(alignment: .center, spacing: 28) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(endpoints.leftLabel)
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.tertiary)
+                    .textCase(.uppercase)
+                Text(endpoints.leftValue)
+                    .font(.system(size: 24, weight: .bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+            }
+
+            Image(systemName: "arrow.right")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundStyle(ViaductStyle.accent)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(endpoints.rightLabel)
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.tertiary)
+                    .textCase(.uppercase)
+                Text(endpoints.rightValue)
+                    .font(.system(size: 24, weight: .bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func routeEndpoints(_ tunnel: Tunnel) -> (leftLabel: String, leftValue: String, rightLabel: String, rightValue: String) {
+        let bind = tunnel.bindAddress.flatMap { $0.isEmpty ? nil : $0 } ?? "127.0.0.1"
+        switch tunnel.type {
+        case .local:
+            let left = tunnel.localPort.map { "\(bind):\($0)" } ?? "Incomplete"
+            let right = tunnel.remoteHost.flatMap { host in tunnel.remotePort.map { "\(host):\($0)" } } ?? "Incomplete"
+            return ("Local", left, "Remote", right)
+        case .remote:
+            let left = tunnel.remotePort.map { "\(tunnel.host):\($0)" } ?? "Incomplete"
+            let targetHost = tunnel.remoteHost.flatMap { $0.isEmpty ? nil : $0 } ?? "localhost"
+            let right = tunnel.localPort.map { "\(targetHost):\($0)" } ?? "Incomplete"
+            return ("Remote", left, "Local", right)
+        case .dynamic:
+            let left = tunnel.localPort.map { "\(bind):\($0)" } ?? "Incomplete"
+            return ("SOCKS", left, "SSH Server", "\(tunnel.host):\(tunnel.port)")
+        }
+    }
+
+    private func retryLabel(_ state: TunnelState) -> String {
+        if case .reconnecting(let attempt) = state { return "\(attempt)" }
+        return "0"
     }
 
     // MARK: - Toolbar
@@ -561,12 +611,12 @@ struct DetailCard<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center) {
                 Text(title.uppercased())
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundStyle(.tertiary)
-                    .tracking(0.3)
+                    .tracking(0.6)
                 Spacer()
                 trailing
             }
@@ -578,10 +628,10 @@ struct DetailCard<Content: View>: View {
             .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(Color(.separatorColor).opacity(0.5), lineWidth: 0.5)
+                    .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
             }
         }
-        .padding(.bottom, 18)
+        .padding(.bottom, 34)
     }
 }
 
@@ -649,19 +699,20 @@ struct MetricTile<Value: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label.uppercased())
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundStyle(.tertiary)
-                .tracking(0.3)
+                .tracking(0.6)
                 .lineLimit(1)
             value
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 22)
+        .frame(minHeight: 92)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
+        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: ViaductStyle.cardCorner))
         .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(Color(.separatorColor).opacity(0.4), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: ViaductStyle.cardCorner)
+                .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
         }
     }
 }

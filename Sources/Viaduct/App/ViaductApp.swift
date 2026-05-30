@@ -79,29 +79,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct SettingsView: View {
     var body: some View {
         SettingsContent()
-            .padding(20)
-            .frame(width: 520, height: 360)
+            .padding(32)
+            .frame(width: 620, height: 420)
+            .background(ViaductStyle.detailBackground)
     }
 }
 
 struct MainSettingsView: View {
+    @State private var appState = AppState.shared
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Text("Settings")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 24, weight: .bold))
                 Spacer()
+                Button {
+                    appState.selectedSidebarItem = .allTunnels
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                }
+                .buttonStyle(DetailIconButtonStyle())
+                .help("Close Settings")
             }
-            .padding(.horizontal, 18)
+            .padding(.horizontal, 46)
             .frame(height: ViaductStyle.titlebarHeight)
             .background(ViaductStyle.titlebarBackground)
-            .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+            .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairlineSoft).frame(height: 0.5) }
 
-            SettingsContent()
-                .padding(.horizontal, 28)
-                .padding(.top, 24)
-                .frame(maxWidth: 760, maxHeight: .infinity, alignment: .topLeading)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            ScrollView {
+                SettingsContent()
+                    .padding(.horizontal, 46)
+                    .padding(.top, 34)
+                    .padding(.bottom, 40)
+                    .frame(maxWidth: 860, alignment: .topLeading)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+            }
         }
         .background(ViaductStyle.detailBackground)
     }
@@ -114,8 +128,8 @@ private struct SettingsContent: View {
     @State private var loginItemError: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            DetailCard(title: "General") {
+        VStack(alignment: .leading, spacing: 28) {
+            SettingsCard(title: "General") {
                 SettingsPickerRow(label: "Appearance") {
                     Picker("", selection: $appearance) {
                         ForEach(AppAppearance.allCases) { option in
@@ -124,7 +138,7 @@ private struct SettingsContent: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
-                    .frame(width: 240)
+                    .frame(width: 260)
                 }
 
                 SettingsToggleRow(
@@ -146,7 +160,7 @@ private struct SettingsContent: View {
                 }
             }
 
-            DetailCard(title: "Tunnels") {
+            SettingsCard(title: "Tunnels") {
                 SettingsTextRow(label: "Auto-connect", value: "Per-tunnel setting")
                 SettingsTextRow(label: "Reconnect", value: "Network and wake events")
                 SettingsTextRow(
@@ -169,6 +183,29 @@ private struct SettingsContent: View {
         } catch {
             loginItemError = error.localizedDescription
             openAtLogin = SMAppService.mainApp.status == .enabled
+        }
+    }
+}
+
+private struct SettingsCard<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title.uppercased())
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundStyle(.tertiary)
+                .tracking(0.6)
+
+            VStack(spacing: 0) {
+                content
+            }
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: ViaductStyle.cardCorner))
+            .overlay {
+                RoundedRectangle(cornerRadius: ViaductStyle.cardCorner)
+                    .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5)
+            }
         }
     }
 }
@@ -225,17 +262,17 @@ private struct SettingsRow<Content: View>: View {
         VStack(spacing: 0) {
             HStack(alignment: .center, spacing: 12) {
                 Text(label)
-                    .font(.system(size: 12))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(.secondary)
-                    .frame(width: 132, alignment: .leading)
+                    .frame(width: 150, alignment: .leading)
                     .fixedSize()
 
                 Spacer(minLength: 12)
 
                 content
             }
-            .padding(.horizontal, 14)
-            .frame(minHeight: 38)
+            .padding(.horizontal, 18)
+            .frame(minHeight: 54)
 
             if !last {
                 Divider().padding(.leading, 14)
