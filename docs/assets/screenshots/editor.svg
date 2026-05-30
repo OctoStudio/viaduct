@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="820" viewBox="0 0 1120 820" role="img" aria-labelledby="title desc">
+  <title id="title">Viaduct tunnel editor</title>
+  <desc id="desc">The Viaduct tunnel editor with forwarding, SSH server, authentication, and reconnect settings.</desc>
+  <defs>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="130%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#10141d" flood-opacity=".16"/>
+    </filter>
+    <style>
+      .bg{fill:#eceadf}.panel{fill:#fbfaf6;stroke:#d8d4c8}.title{fill:#15171c;font:700 26px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.label{fill:#8d8f97;font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.8px}.text{fill:#15171c;font:500 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sub{fill:#54565e;font:500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.line{stroke:#dedacf}.field{fill:#fffef9;stroke:#d8d4c8}.chip{fill:#eef3ff;stroke:#b8c9ff}.blue{fill:#1f5fff}.green{fill:#1f9d4d}.soft{fill:#f3f1ea}
+    </style>
+  </defs>
+  <rect class="bg" width="1120" height="820"/>
+  <rect x="130" y="58" width="860" height="704" rx="18" class="panel" filter="url(#shadow)"/>
+  <rect x="130" y="58" width="860" height="52" rx="18" fill="#f7f5ee" stroke="#d8d4c8"/>
+  <circle cx="162" cy="84" r="7" fill="#ff5f57"/><circle cx="186" cy="84" r="7" fill="#ffbd2e"/><circle cx="210" cy="84" r="7" fill="#28c840"/>
+  <text x="178" y="158" class="title">New Tunnel</text>
+  <text x="178" y="188" class="sub">Define the forward once. Viaduct keeps the command repeatable.</text>
+
+  <text x="178" y="242" class="label">IDENTITY</text>
+  <rect x="178" y="258" width="360" height="46" rx="9" class="field"/><text x="198" y="287" class="text">Postgres staging</text>
+  <rect x="558" y="258" width="184" height="46" rx="9" class="chip"/><text x="582" y="287" class="sub" fill="#1f5fff">staging</text>
+
+  <text x="178" y="358" class="label">ON THIS MAC</text>
+  <rect x="178" y="376" width="238" height="48" rx="9" class="field"/><text x="198" y="406" class="text">127.0.0.1</text>
+  <rect x="434" y="376" width="150" height="48" rx="9" class="field"/><text x="454" y="406" class="text">5432</text>
+  <path d="M625 400h92" stroke="#1f5fff" stroke-width="4" stroke-linecap="round"/><path d="M702 388l16 12-16 12" fill="none" stroke="#1f5fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="178" y="465" class="label">FORWARD TO</text>
+  <rect x="178" y="483" width="238" height="48" rx="9" class="field"/><text x="198" y="513" class="text">db.internal</text>
+  <rect x="434" y="483" width="150" height="48" rx="9" class="field"/><text x="454" y="513" class="text">5432</text>
+
+  <line x1="178" y1="569" x2="942" y2="569" class="line"/>
+  <text x="178" y="610" class="label">SSH SERVER</text>
+  <rect x="178" y="628" width="256" height="48" rx="9" class="field"/><text x="198" y="658" class="text">bastion.example.com</text>
+  <rect x="452" y="628" width="150" height="48" rx="9" class="field"/><text x="472" y="658" class="text">ops</text>
+  <rect x="620" y="628" width="110" height="48" rx="9" class="field"/><text x="640" y="658" class="text">22</text>
+
+  <text x="760" y="242" class="label">AUTHENTICATION</text>
+  <rect x="760" y="258" width="182" height="46" rx="9" class="field"/><circle cx="786" cy="281" r="6" class="green"/><text x="804" y="287" class="text">1Password agent</text>
+  <text x="760" y="358" class="label">BEHAVIOR</text>
+  <rect x="760" y="376" width="182" height="46" rx="9" class="field"/><circle cx="787" cy="399" r="13" class="blue"/><path d="M781 399l4 4 9-10" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><text x="814" y="405" class="text">Auto-connect</text>
+  <rect x="760" y="436" width="182" height="46" rx="9" class="field"/><circle cx="787" cy="459" r="13" class="blue"/><path d="M781 459l4 4 9-10" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><text x="814" y="465" class="text">Reconnect</text>
+
+  <rect x="790" y="696" width="152" height="42" rx="8" fill="#1f5fff"/><text x="837" y="723" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="700" fill="#fff">Save Tunnel</text>
+</svg>

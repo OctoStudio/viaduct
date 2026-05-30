@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Viaduct main window</title>
+  <desc id="desc">A native macOS window showing Viaduct tunnel groups, tunnel list, and connection details.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#10141d" flood-opacity=".18"/>
+    </filter>
+    <style>
+      .bg{fill:#eceadf}.window{fill:#fbfaf6;stroke:#d8d4c8}.title{fill:#15171c;font:600 20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.text{fill:#54565e;font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.small{fill:#8d8f97;font:500 12px ui-monospace,SFMono-Regular,Menlo,monospace}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.blue{fill:#1f5fff}.green{fill:#1f9d4d}.amber{fill:#e08a00}.line{stroke:#dedacf}.soft{fill:#f3f1ea}.card{fill:#fffef9;stroke:#dedacf}.pill{fill:#eef3ff;stroke:#b8c9ff}.sidebar{fill:#f3f1ea}.selected{fill:#e9eefc}.muted{fill:#8d8f97}.cmd{fill:#15171c;font:500 13px ui-monospace,SFMono-Regular,Menlo,monospace}
+    </style>
+  </defs>
+  <rect class="bg" width="1440" height="900"/>
+  <rect x="90" y="70" width="1260" height="760" rx="18" class="window" filter="url(#shadow)"/>
+  <rect x="90" y="70" width="1260" height="48" rx="18" fill="#f7f5ee" stroke="#d8d4c8"/>
+  <circle cx="122" cy="94" r="7" fill="#ff5f57"/><circle cx="146" cy="94" r="7" fill="#ffbd2e"/><circle cx="170" cy="94" r="7" fill="#28c840"/>
+
+  <rect x="90" y="118" width="260" height="712" class="sidebar"/>
+  <line x1="350" y1="118" x2="350" y2="830" class="line"/>
+  <text x="126" y="167" class="title">Viaduct</text>
+  <rect x="122" y="195" width="194" height="34" rx="7" class="selected"/>
+  <circle cx="141" cy="212" r="5" class="blue"/><text x="158" y="218" class="text" fill="#15171c">All tunnels</text><text x="292" y="218" class="small">4</text>
+  <text x="124" y="266" class="small">SMART GROUPS</text>
+  <text x="126" y="303" class="text">Connected</text><text x="292" y="303" class="small">2</text>
+  <text x="126" y="338" class="text">Needs attention</text><text x="292" y="338" class="small">1</text>
+  <text x="124" y="399" class="small">TAGS</text>
+  <rect x="124" y="423" width="96" height="26" rx="13" fill="#edf7f0" stroke="#c9e5d1"/><text x="142" y="441" class="small" fill="#1f9d4d">staging</text>
+  <rect x="124" y="462" width="112" height="26" rx="13" fill="#fff4dd" stroke="#f0d5a6"/><text x="142" y="480" class="small" fill="#a86600">production</text>
+  <rect x="124" y="501" width="83" height="26" rx="13" fill="#eef3ff" stroke="#cbd8ff"/><text x="142" y="519" class="small" fill="#1f5fff">dev</text>
+
+  <rect x="350" y="118" width="360" height="712" fill="#fbfaf6"/>
+  <line x1="710" y1="118" x2="710" y2="830" class="line"/>
+  <text x="386" y="167" class="title">Tunnels</text>
+  <rect x="386" y="190" width="286" height="38" rx="9" class="soft" stroke="#dedacf"/>
+  <text x="410" y="215" class="small">Search tunnels</text>
+  <g>
+    <rect x="374" y="252" width="312" height="92" rx="10" class="selected" stroke="#c8d6ff"/>
+    <circle cx="404" cy="282" r="7" class="green"/><text x="424" y="288" class="title" font-size="17">Postgres staging</text>
+    <text x="424" y="313" class="small">127.0.0.1:5432 -> db.internal:5432</text>
+    <rect x="424" y="322" width="72" height="22" rx="11" fill="#edf7f0"/><text x="440" y="337" class="small" fill="#1f9d4d">live</text>
+  </g>
+  <g>
+    <circle cx="404" cy="382" r="7" class="green"/><text x="424" y="388" class="title" font-size="17">Grafana production</text>
+    <text x="424" y="413" class="small">127.0.0.1:3000 -> grafana:3000</text>
+  </g>
+  <line x1="386" y1="438" x2="672" y2="438" class="line"/>
+  <g>
+    <circle cx="404" cy="478" r="7" class="amber"/><text x="424" y="484" class="title" font-size="17">SOCKS proxy</text>
+    <text x="424" y="509" class="small">127.0.0.1:1080 dynamic</text>
+  </g>
+  <line x1="386" y1="534" x2="672" y2="534" class="line"/>
+  <g>
+    <circle cx="404" cy="574" r="7" fill="#b9bbc4"/><text x="424" y="580" class="title" font-size="17">Webhook receiver</text>
+    <text x="424" y="605" class="small">remote :8080 -> localhost:8080</text>
+  </g>
+
+  <rect x="710" y="118" width="640" height="712" fill="#fffef9"/>
+  <text x="758" y="171" class="title" font-size="28">Postgres staging</text>
+  <rect x="758" y="193" width="92" height="28" rx="14" class="pill"/><circle cx="777" cy="207" r="5" class="green"/><text x="790" y="212" class="small" fill="#1f5fff">Connected</text>
+  <text x="758" y="259" class="small">LOCAL</text><text x="758" y="286" class="title" font-size="19">127.0.0.1:5432</text>
+  <text x="1010" y="259" class="small">REMOTE</text><text x="1010" y="286" class="title" font-size="19">db.internal:5432</text>
+  <path d="M895 278h74" stroke="#1f5fff" stroke-width="3" stroke-linecap="round"/><path d="M957 268l12 10-12 10" fill="none" stroke="#1f5fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="758" y="342" width="168" height="92" rx="10" class="card"/><text x="782" y="377" class="small">UPTIME</text><text x="782" y="407" class="title" font-size="26">1h 20m</text>
+  <rect x="950" y="342" width="168" height="92" rx="10" class="card"/><text x="974" y="377" class="small">RETRIES</text><text x="974" y="407" class="title" font-size="26">0</text>
+  <rect x="1142" y="342" width="150" height="92" rx="10" class="card"/><text x="1166" y="377" class="small">AUTH</text><text x="1166" y="407" class="title" font-size="22">1Password</text>
+
+  <text x="758" y="493" class="small">SSH COMMAND</text>
+  <rect x="758" y="514" width="534" height="74" rx="9" fill="#15171c"/>
+  <text x="782" y="556" class="cmd" fill="#f8f7f0">ssh -N -L 127.0.0.1:5432:db.internal:5432 ops@bastion</text>
+
+  <text x="758" y="652" class="small">ACTIVITY</text>
+  <rect x="758" y="674" width="534" height="102" rx="10" class="card"/>
+  <circle cx="785" cy="707" r="5" class="green"/><text x="804" y="712" class="text">Tunnel connected</text><text x="1199" y="712" class="small">10:42</text>
+  <line x1="782" y1="732" x2="1266" y2="732" class="line"/>
+  <circle cx="785" cy="757" r="5" class="blue"/><text x="804" y="762" class="text">Network monitor armed</text><text x="1199" y="762" class="small">10:42</text>
+</svg>

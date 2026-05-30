@@ -4,6 +4,14 @@ Viaduct is a native macOS menu bar app for creating, monitoring, and reconnectin
 
 It wraps the system `ssh` client in a small SwiftUI interface, so tunnel configuration stays visible and repeatable without replacing the SSH tooling already on macOS.
 
+## Screenshots
+
+![Viaduct main window](docs/assets/screenshots/main-window.svg)
+
+| Tunnel editor | Menu bar popover |
+| --- | --- |
+| ![Viaduct tunnel editor](docs/assets/screenshots/editor.svg) | ![Viaduct menu bar popover](docs/assets/screenshots/menubar.svg) |
+
 ## Features
 
 - Local, remote, and dynamic SOCKS tunnel definitions
