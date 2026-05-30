@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viaduct — SSH tunnels that just stay up</title>
+<meta name="description" content="A native macOS app for managing SSH tunnels. Define once, connect from your menu bar, and let Viaduct keep them alive — with 1Password and SSH-agent auth built in.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ── Nav ─────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2.2 2 9.8 0 12M8 2C6 4.2 6 11.8 8 14"/>
+        </svg>
+      </span>
+      Viaduct
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#security">Security</a>
+      <a href="#compare">vs. raw SSH</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+        <svg class="ic-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.95 3.05l-1.13 1.13M4.18 11.82l-1.13 1.13M12.95 12.95l-1.13-1.13M4.18 4.18L3.05 3.05"/>
+        </svg>
+        <svg class="ic-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <path d="M13.5 9.5A5.5 5.5 0 016.5 2.5 5.5 5.5 0 1013.5 9.5z"/>
+        </svg>
+      </button>
+      <a href="https://github.com" target="_blank" rel="noopener" class="icon-btn" title="GitHub" aria-label="GitHub">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <a href="#download" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M3 13h10"/></svg>
+        Download
+      </a>
+    </div>
+  </div>
+</nav>
+
+<a id="top"></a>
+
+<!-- ── Hero ────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap hero-in">
+    <span class="pill"><span class="dot"></span>&nbsp;<b>v1.4</b>&nbsp;now with 1Password agent support</span>
+    <h1 class="hero-title">SSH tunnels that<br><span class="grad">just stay up.</span></h1>
+    <p class="hero-sub">Viaduct is a native macOS app for managing SSH port forwards. Define a tunnel once, launch it from your menu bar, and let it auto-reconnect through sleep, Wi-Fi changes, and dropped links — no terminal babysitting.</p>
+    <div class="hero-cta">
+      <a href="#download" class="btn btn-primary btn-lg">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M3 13h10"/></svg>
+        Download for macOS
+      </a>
+      <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
+    </div>
+    <p class="cta-note">Free &amp; open source · Universal (Apple Silicon &amp; Intel) · macOS 13+ · 8.2 MB <code>.dmg</code></p>
+  </div>
+
+  <!-- App window mockup -->
+  <div class="stage">
+    <div class="appwin">
+      <!-- sidebar -->
+      <aside class="mw-side">
+        <div class="mw-tl"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></div>
+        <div class="mw-shead">Smart Groups</div>
+        <div class="mw-sitem sel"><span style="width:13px;height:13px;display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><rect x="2" y="3" width="12" height="3" rx="1"/><rect x="2" y="7.5" width="12" height="3" rx="1"/></svg></span>All Tunnels<span class="cnt">6</span></div>
+        <div class="mw-sitem"><span class="sd" style="background:var(--success)"></span>Connected<span class="cnt">2</span></div>
+        <div class="mw-sitem"><span class="sd" style="background:var(--danger)"></span>Errors<span class="cnt">1</span></div>
+        <div class="mw-shead">Tags</div>
+        <div class="mw-sitem"><span class="sd" style="background:#FF453A"></span>Production<span class="cnt">3</span></div>
+        <div class="mw-sitem"><span class="sd" style="background:#FF9F0A"></span>Staging<span class="cnt">1</span></div>
+        <div class="mw-sitem"><span class="sd" style="background:#30D158"></span>Development<span class="cnt">1</span></div>
+      </aside>
+      <!-- main -->
+      <div class="mw-main">
+        <div class="mw-list">
+          <div class="mw-ltool">
+            <div class="mw-search">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.2"/><path d="M10 10l3 3"/></svg>
+              Search
+            </div>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--ink-3)" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>
+          </div>
+          <div class="mw-row sel">
+            <span class="sd" style="background:#fff"></span>
+            <div><div class="nm">Postgres — staging</div><div class="rt">127.0.0.1:5432 → db-primary:5432</div></div>
+          </div>
+          <div class="mw-row">
+            <span class="sd" style="background:var(--success)"></span>
+            <div><div class="nm">Grafana — prod</div><div class="rt">127.0.0.1:3000 → grafana:3000</div></div>
+          </div>
+          <div class="mw-row">
+            <span class="sd" style="background:var(--ink-3)"></span>
+            <div><div class="nm">Redis — dev</div><div class="rt">127.0.0.1:6379 → localhost:6379</div></div>
+          </div>
+          <div class="mw-row">
+            <span class="sd" style="background:var(--danger)"></span>
+            <div><div class="nm">Webhook receiver</div><div class="rt">edge-1:8080 → localhost:9090</div></div>
+          </div>
+          <div class="mw-row">
+            <span class="sd" style="background:var(--warn)"></span>
+            <div><div class="nm">Kafka broker</div><div class="rt">127.0.0.1:9092 → b-1.kafka:9092</div></div>
+          </div>
+        </div>
+        <div class="mw-detail">
+          <div class="mw-dtool"><span class="nm">Postgres — staging</span></div>
+          <div class="mw-banner" style="background:color-mix(in srgb, var(--success) 8%, transparent); border:0.5px solid color-mix(in srgb, var(--success) 28%, transparent)">
+            <span class="ic" style="background:color-mix(in srgb, var(--success) 16%, transparent)"><span class="sd" style="width:11px;height:11px;border-radius:50%;background:var(--success)"></span></span>
+            <div><div class="t1">Connected</div><div class="t2">Stable for 1h 20m · 127.0.0.1:5432</div></div>
+            <span class="play" style="background:var(--danger)"><svg width="9" height="9" viewBox="0 0 16 16" fill="#fff"><rect x="4" y="4" width="8" height="8" rx="1.2"/></svg></span>
+          </div>
+          <div class="mw-kv">
+            <div class="k">Forwarding</div>
+            <div class="box">
+              <div class="line"><span class="lbl">Type</span><span class="val" style="font-family:var(--font)">Local Forward</span></div>
+              <div class="line"><span class="lbl">Route</span><span class="val">:5432 → :5432</span></div>
+            </div>
+            <div class="k">Authentication</div>
+            <div class="box">
+              <div class="line"><span class="lbl">Method</span><span class="val" style="font-family:var(--font)">1Password Agent</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Features ────────────────────────────────── -->
+<section id="features" class="pad">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Features</div>
+      <h2 class="sh">Everything your <code style="font-family:var(--mono);font-size:0.8em;background:var(--code-bg);padding:2px 8px;border-radius:6px">~/.ssh/config</code> can't do</h2>
+      <p class="sh-sub">Built for people who live in tunnels — backend engineers, DevOps, and anyone tired of <span style="font-family:var(--mono);font-size:0.92em">ssh -L</span> in a tmux pane.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8a5 5 0 11-1.46-3.54M13 2.5V5H10.5"/></svg></div>
+        <h3>Auto-reconnect</h3>
+        <p>Tunnels heal themselves through sleep/wake, Wi-Fi switches, and network blips — with exponential backoff and a visible retry count.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h12M2 8h12M2 11h12"/></svg></div>
+        <h3>Menu bar control</h3>
+        <p>Connect, stop, and search every tunnel from a single keystroke. Status lives in your menu bar — green means you're through.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="10.5" r="2.5"/><path d="M7.5 8.5l5-5M10.5 5.5l1.5 1.5M9 7l1.5 1.5"/></svg></div>
+        <h3>1Password &amp; agent auth</h3>
+        <p>Use the 1Password SSH agent, the system agent, or a Keychain-stored passphrase. Keys never touch a config file in plain text.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+        <h3>Local, remote &amp; SOCKS</h3>
+        <p>Forward a port in (<span style="font-family:var(--mono)">-L</span>), expose one out (<span style="font-family:var(--mono)">-R</span>), or run a dynamic SOCKS proxy (<span style="font-family:var(--mono)">-D</span>) — all from the same UI.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5L7.5 3.5h5v5l-5 5-5-5z"/><circle cx="10" cy="6" r=".8" fill="currentColor"/></svg></div>
+        <h3>Tags &amp; smart groups</h3>
+        <p>Group tunnels by environment or project. Filter to "everything connected" or "production only" in a click. Bulk-launch a whole group.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M5 7l2 1.5L5 10M8.5 10.5h3"/></svg></div>
+        <h3>Inspect the real command</h3>
+        <p>See the exact <span style="font-family:var(--mono)">ssh</span> invocation Viaduct runs, copy it, and a live activity log of every connect, retry, and error.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ────────────────────────────── -->
+<section id="how" class="band pad">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">How it works</div>
+      <h2 class="sh">From zero to forwarded in three steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h3>Define the tunnel</h3>
+        <p>Pick local, remote, or dynamic. Enter the host, ports, and how to authenticate. Viaduct previews the route as you type.</p>
+        <code class="code-chip">-L 127.0.0.1:5432:db:5432</code>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h3>Choose your auth</h3>
+        <p>Point it at your 1Password or system SSH agent. No passphrases pasted into text fields, no keys in plain config.</p>
+        <code class="code-chip">via 1Password SSH agent</code>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h3>Connect &amp; forget</h3>
+        <p>Hit connect — or flag it auto-connect on launch. Viaduct keeps it alive and shows status in your menu bar.</p>
+        <code class="code-chip">● connected · stable 1h 20m</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Security / 1Password ────────────────────── -->
+<section id="security" class="pad">
+  <div class="wrap band-grid">
+    <div>
+      <div class="kbadge">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+        Keys stay where they belong
+      </div>
+      <h2>Your private keys never leave the agent.</h2>
+      <p>Viaduct doesn't read, copy, or store private keys. It asks your SSH agent — 1Password, the macOS system agent, or a Keychain-stored passphrase — to authenticate on demand, exactly like the <span style="font-family:var(--mono);font-size:0.92em">ssh</span> binary does.</p>
+      <ul class="checklist">
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>1Password unlocks keys with Touch ID — nothing on disk in the clear.</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Connections shell out to your own OpenSSH — no reimplemented crypto.</li>
+        <li><span class="ck"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Open source — audit exactly what runs before you trust it.</li>
+      </ul>
+    </div>
+    <div class="vault">
+      <div style="font-family:var(--font);font-size:12px;font-weight:650;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">1Password · SSH Agent</div>
+      <div class="vault-row"><span class="lk"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="10.5" r="2.5"/><path d="M7.5 8.5l5-5M10.5 5.5l1.5 1.5"/></svg></span><span class="nm">acme_staging</span><span class="meta">ed25519</span></div>
+      <div class="vault-row"><span class="lk"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="10.5" r="2.5"/><path d="M7.5 8.5l5-5M10.5 5.5l1.5 1.5"/></svg></span><span class="nm">id_ed25519</span><span class="meta">ed25519</span></div>
+      <div class="vault-row"><span class="lk"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="10.5" r="2.5"/><path d="M7.5 8.5l5-5M10.5 5.5l1.5 1.5"/></svg></span><span class="nm">data_ed25519</span><span class="meta">ed25519</span></div>
+      <div class="vault-row" style="color:var(--success);font-size:11.5px;margin-top:4px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1.5l5.5 2.4v3.6c0 3.2-2.2 5.6-5.5 6.5-3.3-.9-5.5-3.3-5.5-6.5V3.9z"/><path d="M5.8 8l1.6 1.6L10.4 6.5"/></svg>&nbsp;Authenticated with Touch ID</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Comparison ──────────────────────────────── -->
+<section id="compare" class="band pad">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">vs. raw SSH</div>
+      <h2 class="sh">Stop hand-rolling forwards in a terminal tab</h2>
+    </div>
+    <div class="cmp">
+      <div class="cmp-card cmp-before">
+        <div class="cmp-tag">The old way</div>
+        <h3>A terminal tab and good intentions</h3>
+        <div class="cmp-code">$ ssh -N -L 5432:db:5432 \
+    -i ~/.ssh/acme ops@bastion
+# drops on sleep…
+# scroll back for the command…
+# was it 5432 or 5433?</div>
+        <ul class="cmp-list">
+          <li><span class="mk x"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>Dies silently on sleep or network change</li>
+          <li><span class="mk x"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>No idea what's running without <span style="font-family:var(--mono)">ps aux | grep ssh</span></li>
+          <li><span class="mk x"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>Ports and flags live in your shell history</li>
+        </ul>
+      </div>
+      <div class="cmp-card cmp-after">
+        <div class="cmp-tag">With Viaduct</div>
+        <h3>Saved, supervised, one click away</h3>
+        <div class="cmp-code">Postgres — staging
+  ● connected · stable 1h 20m
+  127.0.0.1:5432 → db-primary:5432
+  auth: 1Password agent
+  auto-reconnect: on</div>
+        <ul class="cmp-list">
+          <li><span class="mk v"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Auto-reconnects and reports its own health</li>
+          <li><span class="mk v"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Every tunnel visible and named in one window</li>
+          <li><span class="mk v"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></span>Config saved once, launched from the menu bar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────── -->
+<section id="faq" class="pad">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="sh">Questions, answered</h2>
+    </div>
+    <div class="faq">
+      <details class="q">
+        <summary>Does Viaduct replace OpenSSH?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">No — it drives the <code>ssh</code> binary already installed on your Mac. There's no custom crypto and no separate daemon; Viaduct builds the right invocation, supervises the process, and shows you exactly what it ran.</div>
+      </details>
+      <details class="q">
+        <summary>How does the 1Password integration work?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">Viaduct talks to whichever SSH agent you point it at via the <code>SSH_AUTH_SOCK</code> protocol. If that's the 1Password agent, your keys are unlocked with Touch ID at connect time and never stored by Viaduct.</div>
+      </details>
+      <details class="q">
+        <summary>What kinds of forwarding are supported?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">Local (<code>-L</code>), remote (<code>-R</code>), and dynamic SOCKS (<code>-D</code>) forwards, with optional <code>ProxyJump</code> bastions and agent forwarding. Each tunnel can bind to localhost or any interface you choose.</div>
+      </details>
+      <details class="q">
+        <summary>Does it survive sleep and Wi-Fi changes?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">Yes. Viaduct watches for wake and network-change events and reconnects with exponential backoff, surfacing the retry count so you always know what's happening.</div>
+      </details>
+      <details class="q">
+        <summary>Is it really free?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">Free and open source. Download the signed, notarized <code>.dmg</code> below, or build it yourself from source. No account, no telemetry.</div>
+      </details>
+      <details class="q">
+        <summary>What are the system requirements?<span class="chev"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4-4 4"/></svg></span></summary>
+        <div class="ans">macOS 13 Ventura or later, on Apple Silicon or Intel. The download is a universal binary — about 8 MB.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final CTA ───────────────────────────────── -->
+<section id="download" class="pad-sm">
+  <div class="final">
+    <div class="final-card">
+      <h2>Keep your tunnels up.</h2>
+      <p>Free, open source, and notarized. Download and connect in under a minute.</p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary btn-lg">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 7L8 10.5 11.5 7M3 13h10"/></svg>
+          Download Viaduct 1.4
+        </a>
+        <a href="https://github.com" target="_blank" rel="noopener" class="btn btn-ghost btn-lg" style="background:rgba(255,255,255,0.7);color:#1a1320;border-color:rgba(0,0,0,0.08)">View source</a>
+      </div>
+      <p style="font-size:12.5px;margin:18px 0 0;opacity:0.8">Universal · macOS 13+ · 8.2 MB · signed &amp; notarized</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ──────────────────────────────────── -->
+<footer>
+  <div class="wrap foot">
+    <div class="foot-brand">
+      <a class="brand" href="#top">
+        <span class="brand-mark"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2.2 2 9.8 0 12M8 2C6 4.2 6 11.8 8 14"/></svg></span>
+        Viaduct
+      </a>
+      <p>A native macOS app for SSH tunnels that stay up. Made for people who live in the terminal but would rather not.</p>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#security">Security</a>
+        <a href="#download">Download</a>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <a href="#faq">FAQ</a>
+        <a href="https://github.com" target="_blank" rel="noopener">Documentation</a>
+        <a href="https://github.com" target="_blank" rel="noopener">Changelog</a>
+        <a href="https://github.com" target="_blank" rel="noopener">Source</a>
+      </div>
+      <div class="foot-col">
+        <h4>Connect</h4>
+        <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+        <a href="#">Report an issue</a>
+        <a href="#">Email support</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Viaduct</span>
+    <span style="opacity:0.5">·</span>
+    <a href="#">Privacy</a>
+    <a href="#">License (MIT)</a>
+    <span style="margin-left:auto">Built for macOS</span>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle with persistence + system default
+  (function () {
+    const root = document.documentElement;
+    const sun = document.querySelector('.ic-sun');
+    const moon = document.querySelector('.ic-moon');
+    const KEY = 'viaduct-theme';
+
+    function apply(theme) {
+      const dark = theme === 'dark';
+      root.classList.toggle('dark', dark);
+      if (sun)  sun.style.display  = dark ? 'none' : '';
+      if (moon) moon.style.display = dark ? '' : 'none';
+    }
+    let saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    const initial = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    apply(initial);
+
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      const next = root.classList.contains('dark') ? 'light' : 'dark';
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

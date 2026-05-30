@@ -75,6 +75,12 @@ codesign --verify --deep --strict --verbose=2 /path/to/Viaduct.app
 spctl --assess --type execute --verbose /path/to/Viaduct.app
 ```
 
+## Website
+
+The static website lives in `docs/`. Pushes to `main` that change `docs/**` automatically deploy through the GitHub Pages workflow in `.github/workflows/pages.yml`.
+
+In the repository settings on GitHub, set Pages to use **GitHub Actions** as the source.
+
 ## Project Layout
 
 - `Sources/Viaduct/App`: app lifecycle, settings, and window management
@@ -82,6 +88,7 @@ spctl --assess --type execute --verbose /path/to/Viaduct.app
 - `Sources/Viaduct/Persistence`: database setup and repository access
 - `Sources/Viaduct/UI`: menu bar, main window, editor, and shared UI components
 - `Tests/ViaductTests`: unit tests
+- `docs`: GitHub Pages website
 - `Scripts`: local build and packaging helpers
 
 ## Contributing
