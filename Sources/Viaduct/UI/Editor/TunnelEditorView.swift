@@ -1,8 +1,8 @@
 import SwiftUI
 
-// MARK: - Editor form primitives
+// MARK: - Editor primitives
 
-private let labelWidth: CGFloat = 112
+private let kLabelWidth: CGFloat = 116
 
 struct EditorSection<Content: View>: View {
     var title: String? = nil
@@ -21,9 +21,9 @@ struct EditorSection<Content: View>: View {
             VStack(spacing: 0) {
                 content
             }
-            .background(Color(.windowBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(Color(.separatorColor).opacity(0.6), lineWidth: 0.5))
+                .strokeBorder(ViaductStyle.hairline, lineWidth: 0.5))
         }
     }
 }
@@ -43,7 +43,7 @@ struct EditorRow<Content: View>: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
-            .frame(width: labelWidth, alignment: .trailing)
+            .frame(width: kLabelWidth, alignment: .trailing)
             .padding(.trailing, 12)
 
             content
@@ -56,7 +56,9 @@ struct EditorRow<Content: View>: View {
 
 struct EditorDivider: View {
     var body: some View {
-        Divider().padding(.leading, labelWidth + 24)
+        ViaductStyle.hairline
+            .frame(height: 0.5)
+            .padding(.leading, kLabelWidth + 24)
     }
 }
 
@@ -92,8 +94,6 @@ struct TunnelEditorView: View {
     @State private var remoteHostInvalid = false
     @State private var remotePortInvalid = false
     @State private var validationMessage: String?
-    @State private var showAuthentication = true
-    @State private var showBehavior = false
     @State private var showAdvanced = false
     @FocusState private var focusedField: Field?
 
@@ -116,55 +116,36 @@ struct TunnelEditorView: View {
         _bindAddress  = State(initialValue: tunnel?.bindAddress ?? "")
         _identityFile = State(initialValue: tunnel?.identityFile ?? "")
         _proxyJump    = State(initialValue: tunnel?.proxyJump ?? "")
-        _agentForwarding = State(initialValue: tunnel?.agentForwarding ?? false)
-        let initialAuthMethod = tunnel?.authMethod == .keychainPassphrase ? .systemAgent : (tunnel?.authMethod ?? .systemAgent)
-        _authMethod      = State(initialValue: initialAuthMethod)
-        _autoConnect     = State(initialValue: tunnel?.autoConnect ?? false)
+        _agentForwarding   = State(initialValue: tunnel?.agentForwarding ?? false)
+        let initialAuth = tunnel?.authMethod == .keychainPassphrase ? AuthMethod.systemAgent : (tunnel?.authMethod ?? .systemAgent)
+        _authMethod        = State(initialValue: initialAuth)
+        _autoConnect       = State(initialValue: tunnel?.autoConnect ?? false)
         _strictHostChecking = State(initialValue: tunnel?.strictHostChecking ?? .acceptNew)
-        _extraOptions    = State(initialValue: tunnel?.extraOptions ?? [])
-        _selectedTagIDs  = State(initialValue: [])
+        _extraOptions      = State(initialValue: tunnel?.extraOptions ?? [])
+        _selectedTagIDs    = State(initialValue: [])
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Toolbar
-            HStack {
-                Button("Cancel") { dismiss() }
-                    .keyboardShortcut(.escape, modifiers: [])
-                Spacer()
-                Text(isNew ? "New Tunnel" : "Edit Tunnel")
-                    .font(.headline)
-                Spacer()
-                Button("Save") { save() }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.return, modifiers: .command)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .background(.bar)
-
+            editorToolbar
             Divider()
-
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 18) {
                     identitySection
                     forwardingSection
                     sshSection
-                    if let validationMessage {
-                        validationBanner(validationMessage)
-                    }
-                    DisclosureGroup("Authentication", isExpanded: $showAuthentication) {
-                        authSection
-                            .padding(.top, 6)
-                    }
+                    authSection
+                    behaviorSection
                     if !appState.tags.isEmpty { tagsSection }
-                    DisclosureGroup("Behavior", isExpanded: $showBehavior) {
-                        behaviorSection
-                            .padding(.top, 6)
+                    DisclosureGroup(isExpanded: $showAdvanced) {
+                        advancedSection.padding(.top, 6)
+                    } label: {
+                        Text("Advanced Options")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
                     }
-                    DisclosureGroup("Advanced Options", isExpanded: $showAdvanced) {
-                        advancedSection
-                            .padding(.top, 6)
+                    if let msg = validationMessage {
+                        validationBanner(msg)
                     }
                 }
                 .padding(20)
@@ -190,7 +171,27 @@ struct TunnelEditorView: View {
         }
     }
 
-    // MARK: - Sections
+    // MARK: - Toolbar
+
+    private var editorToolbar: some View {
+        HStack {
+            Button("Cancel") { dismiss() }
+                .keyboardShortcut(.escape, modifiers: [])
+            Spacer()
+            Text(isNew ? "New Tunnel" : "Edit Tunnel")
+                .font(.system(size: 13, weight: .semibold))
+            Spacer()
+            Button(isNew ? "Create" : "Save") { save() }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.return, modifiers: .command)
+                .disabled(!isValid)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.bar)
+    }
+
+    // MARK: - Identity
 
     private var identitySection: some View {
         EditorSection {
@@ -199,11 +200,7 @@ struct TunnelEditorView: View {
                     .textFieldStyle(.plain)
                     .font(.callout)
                     .focused($focusedField, equals: .name)
-                    .overlay(alignment: .bottom) {
-                        if nameInvalid {
-                            Rectangle().fill(.red).frame(height: 1.5)
-                        }
-                    }
+                    .underlineOnError(nameInvalid)
                     .onChange(of: name) { _, _ in nameInvalid = false }
             }
             EditorDivider()
@@ -215,22 +212,21 @@ struct TunnelEditorView: View {
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .frame(maxWidth: 280)
+                .frame(maxWidth: 300)
             }
         }
     }
+
+    // MARK: - Forwarding
 
     @ViewBuilder
     private var forwardingSection: some View {
         switch type {
         case .local:
-            // Local side
             EditorSection(title: "On This Mac") {
                 EditorRow(label: "Local Port") {
                     portTextField($localPort, placeholder: "8080", field: .localPort)
-                        .overlay(alignment: .bottom) {
-                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(localPortInvalid)
                         .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
@@ -240,46 +236,35 @@ struct TunnelEditorView: View {
                 }
             }
             forwardingArrow
-            // Remote side
             EditorSection(title: "Forward To") {
                 EditorRow(label: "Host") {
                     TextField("db.internal", text: $remoteHost)
                         .textFieldStyle(.plain).font(.callout)
                         .focused($focusedField, equals: .remoteHost)
-                        .overlay(alignment: .bottom) {
-                            if remoteHostInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(remoteHostInvalid)
                         .onChange(of: remoteHost) { _, _ in remoteHostInvalid = false }
                 }
                 EditorDivider()
                 EditorRow(label: "Port") {
                     portTextField($remotePort, placeholder: "5432", field: .remotePort)
-                        .overlay(alignment: .bottom) {
-                            if remotePortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(remotePortInvalid)
                         .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
                 }
             }
 
         case .remote:
-            // Remote side (where the listener opens)
             EditorSection(title: "On Remote Server") {
                 EditorRow(label: "Listen Port") {
                     portTextField($remotePort, placeholder: "9090", field: .remotePort)
-                        .overlay(alignment: .bottom) {
-                            if remotePortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(remotePortInvalid)
                         .onChange(of: remotePort) { _, _ in remotePortInvalid = false }
                 }
             }
             forwardingArrow
-            // Local side (where traffic is sent)
             EditorSection(title: "Forward To (This Mac)") {
                 EditorRow(label: "Local Port") {
                     portTextField($localPort, placeholder: "9090", field: .localPort)
-                        .overlay(alignment: .bottom) {
-                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(localPortInvalid)
                         .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
@@ -293,9 +278,7 @@ struct TunnelEditorView: View {
             EditorSection(title: "SOCKS5 Proxy") {
                 EditorRow(label: "Listen Port") {
                     portTextField($localPort, placeholder: "1080", field: .localPort)
-                        .overlay(alignment: .bottom) {
-                            if localPortInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(localPortInvalid)
                         .onChange(of: localPort) { _, _ in localPortInvalid = false }
                 }
                 EditorDivider()
@@ -309,18 +292,16 @@ struct TunnelEditorView: View {
 
     private var forwardingArrow: some View {
         HStack(spacing: 6) {
-            Rectangle()
-                .fill(Color(.separatorColor))
-                .frame(height: 0.5)
+            ViaductStyle.hairline.frame(height: 0.5)
             Image(systemName: "arrow.down")
                 .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(.tertiary)
-            Rectangle()
-                .fill(Color(.separatorColor))
-                .frame(height: 0.5)
+            ViaductStyle.hairline.frame(height: 0.5)
         }
         .padding(.horizontal, 4)
     }
+
+    // MARK: - SSH Server
 
     private var sshSection: some View {
         EditorSection(title: "SSH Server") {
@@ -329,18 +310,14 @@ struct TunnelEditorView: View {
                     TextField("ssh.example.com", text: $host)
                         .textFieldStyle(.plain).font(.callout)
                         .focused($focusedField, equals: .host)
-                        .overlay(alignment: .bottom) {
-                            if hostInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(hostInvalid)
                         .onChange(of: host) { _, _ in hostInvalid = false }
                     Text("Port")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                     portTextField($port, placeholder: "22", field: .port)
                         .frame(width: 52)
-                        .overlay(alignment: .bottom) {
-                            if portInvalid { Rectangle().fill(.red).frame(height: 1.5) }
-                        }
+                        .underlineOnError(portInvalid)
                         .onChange(of: port) { _, _ in portInvalid = false }
                 }
             }
@@ -358,8 +335,10 @@ struct TunnelEditorView: View {
         }
     }
 
+    // MARK: - Authentication
+
     private var authSection: some View {
-        EditorSection {
+        EditorSection(title: "Authentication") {
             EditorRow(label: "Method") {
                 Picker("", selection: $authMethod) {
                     Text("System ssh-agent").tag(AuthMethod.systemAgent)
@@ -388,17 +367,10 @@ struct TunnelEditorView: View {
         }
     }
 
-    private var tagsSection: some View {
-        EditorSection(title: "Tags") {
-            EditorRow(label: "") {
-                TagChipPicker(tags: appState.tags, selectedIDs: $selectedTagIDs)
-                    .padding(.vertical, 6)
-            }
-        }
-    }
+    // MARK: - Behavior
 
     private var behaviorSection: some View {
-        EditorSection {
+        EditorSection(title: "Behavior") {
             EditorRow(label: "Auto-connect") {
                 Toggle("Launch with app", isOn: $autoConnect)
                     .font(.callout)
@@ -416,6 +388,19 @@ struct TunnelEditorView: View {
         }
     }
 
+    // MARK: - Tags
+
+    private var tagsSection: some View {
+        EditorSection(title: "Tags") {
+            EditorRow(label: "") {
+                TagChipPicker(tags: appState.tags, selectedIDs: $selectedTagIDs)
+                    .padding(.vertical, 6)
+            }
+        }
+    }
+
+    // MARK: - Advanced
+
     private var advancedSection: some View {
         EditorSection {
             AdvancedOptionsEditor(options: $extraOptions)
@@ -423,6 +408,8 @@ struct TunnelEditorView: View {
                 .padding(.vertical, 10)
         }
     }
+
+    // MARK: - Validation banner
 
     private func validationBanner(_ message: String) -> some View {
         HStack(alignment: .top, spacing: 8) {
@@ -436,7 +423,8 @@ struct TunnelEditorView: View {
         }
         .padding(10)
         .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.red.opacity(0.25), lineWidth: 0.5))
+        .overlay(RoundedRectangle(cornerRadius: 8)
+            .strokeBorder(Color.red.opacity(0.25), lineWidth: 0.5))
     }
 
     // MARK: - Helpers
@@ -465,23 +453,21 @@ struct TunnelEditorView: View {
         let n = name.trimmingCharacters(in: .whitespaces)
         let h = host.trimmingCharacters(in: .whitespaces)
         validationMessage = nil
+
         if n.isEmpty {
             nameInvalid = true
             validationMessage = "Enter a tunnel name."
-            focusedField = .name
-            return
+            focusedField = .name; return
         }
         if h.isEmpty {
             hostInvalid = true
             validationMessage = "Enter the SSH server host."
-            focusedField = .host
-            return
+            focusedField = .host; return
         }
         if !isValidPort(port) {
             portInvalid = true
             validationMessage = "Enter an SSH port from 1 to 65535."
-            focusedField = .port
-            return
+            focusedField = .port; return
         }
         guard validateForwarding() else { return }
 
@@ -490,14 +476,14 @@ struct TunnelEditorView: View {
             name: n,
             type: type,
             localPort: Int(localPort),
-            remoteHost: remoteHost.trimmingCharacters(in: .whitespaces).isEmpty ? nil : remoteHost.trimmingCharacters(in: .whitespaces),
+            remoteHost: remoteHost.trimmingCharacters(in: .whitespaces).nilIfEmpty,
             remotePort: Int(remotePort),
-            bindAddress: bindAddress.trimmingCharacters(in: .whitespaces).isEmpty ? nil : bindAddress.trimmingCharacters(in: .whitespaces),
+            bindAddress: bindAddress.trimmingCharacters(in: .whitespaces).nilIfEmpty,
             host: h,
-            user: user.trimmingCharacters(in: .whitespaces).isEmpty ? nil : user.trimmingCharacters(in: .whitespaces),
+            user: user.trimmingCharacters(in: .whitespaces).nilIfEmpty,
             port: Int(port) ?? 22,
-            identityFile: identityFile.trimmingCharacters(in: .whitespaces).isEmpty ? nil : identityFile.trimmingCharacters(in: .whitespaces),
-            proxyJump: proxyJump.trimmingCharacters(in: .whitespaces).isEmpty ? nil : proxyJump.trimmingCharacters(in: .whitespaces),
+            identityFile: identityFile.trimmingCharacters(in: .whitespaces).nilIfEmpty,
+            proxyJump: proxyJump.trimmingCharacters(in: .whitespaces).nilIfEmpty,
             agentForwarding: agentForwarding,
             authMethod: authMethod,
             autoConnect: autoConnect,
@@ -510,62 +496,52 @@ struct TunnelEditorView: View {
 
     private var isForwardingValid: Bool {
         switch type {
-        case .local:
-            return isValidPort(localPort)
-                && !remoteHost.trimmingCharacters(in: .whitespaces).isEmpty
-                && isValidPort(remotePort)
-        case .remote:
-            return isValidPort(remotePort) && isValidPort(localPort)
-        case .dynamic:
-            return isValidPort(localPort)
+        case .local:   return isValidPort(localPort) && !remoteHost.trimmingCharacters(in: .whitespaces).isEmpty && isValidPort(remotePort)
+        case .remote:  return isValidPort(remotePort) && isValidPort(localPort)
+        case .dynamic: return isValidPort(localPort)
         }
     }
 
     private func validateForwarding() -> Bool {
-        localPortInvalid = false
-        remoteHostInvalid = false
-        remotePortInvalid = false
-
+        localPortInvalid = false; remoteHostInvalid = false; remotePortInvalid = false
         switch type {
         case .local:
-            localPortInvalid = !isValidPort(localPort)
+            localPortInvalid  = !isValidPort(localPort)
             remoteHostInvalid = remoteHost.trimmingCharacters(in: .whitespaces).isEmpty
             remotePortInvalid = !isValidPort(remotePort)
-            if localPortInvalid {
-                validationMessage = "Enter a local port from 1 to 65535."
-                focusedField = .localPort
-            } else if remoteHostInvalid {
-                validationMessage = "Enter the host that this local tunnel forwards to."
-                focusedField = .remoteHost
-            } else if remotePortInvalid {
-                validationMessage = "Enter a remote port from 1 to 65535."
-                focusedField = .remotePort
-            }
+            if localPortInvalid   { validationMessage = "Enter a local port (1–65535)."; focusedField = .localPort }
+            else if remoteHostInvalid { validationMessage = "Enter the remote host to forward to."; focusedField = .remoteHost }
+            else if remotePortInvalid { validationMessage = "Enter a remote port (1–65535)."; focusedField = .remotePort }
         case .remote:
             remotePortInvalid = !isValidPort(remotePort)
-            localPortInvalid = !isValidPort(localPort)
-            if remotePortInvalid {
-                validationMessage = "Enter a remote listen port from 1 to 65535."
-                focusedField = .remotePort
-            } else if localPortInvalid {
-                validationMessage = "Enter a local destination port from 1 to 65535."
-                focusedField = .localPort
-            }
+            localPortInvalid  = !isValidPort(localPort)
+            if remotePortInvalid { validationMessage = "Enter a remote listen port (1–65535)."; focusedField = .remotePort }
+            else if localPortInvalid { validationMessage = "Enter a local destination port (1–65535)."; focusedField = .localPort }
         case .dynamic:
             localPortInvalid = !isValidPort(localPort)
-            if localPortInvalid {
-                validationMessage = "Enter a SOCKS listen port from 1 to 65535."
-                focusedField = .localPort
-            }
+            if localPortInvalid { validationMessage = "Enter a SOCKS listen port (1–65535)."; focusedField = .localPort }
         }
-
         return !localPortInvalid && !remoteHostInvalid && !remotePortInvalid
     }
 
     private func isValidPort(_ value: String) -> Bool {
-        guard let port = Int(value) else { return false }
-        return (1...65535).contains(port)
+        guard let p = Int(value) else { return false }
+        return (1...65535).contains(p)
     }
+}
+
+// MARK: - View helpers
+
+private extension View {
+    func underlineOnError(_ invalid: Bool) -> some View {
+        overlay(alignment: .bottom) {
+            if invalid { Rectangle().fill(Color.red).frame(height: 1.5) }
+        }
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
 }
 
 // MARK: - Tag chip picker

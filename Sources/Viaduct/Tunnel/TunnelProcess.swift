@@ -21,6 +21,7 @@ final class TunnelProcess: ObservableObject {
     private var reconnectTask: Task<Void, Never>?
     private var policy = ReconnectPolicy()
     private var manualStop = false
+    private var permanentFailure = false
     private let repository: TunnelRepository
 
     // Called by TunnelManager when state changes; do not call directly.
@@ -33,6 +34,7 @@ final class TunnelProcess: ObservableObject {
 
     func start(tunnel: Tunnel) {
         manualStop = false
+        permanentFailure = false
         policy.reset()
         launch(tunnel: tunnel)
     }
@@ -104,10 +106,16 @@ final class TunnelProcess: ObservableObject {
         let humanError: String?
 
         if lower.contains("permission denied") {
-            humanError = "Authentication failed: Permission denied"
+            permanentFailure = true
+            if tunnel.authMethod == .onePasswordAgent {
+                humanError = "Authentication failed — 1Password may be locked. Unlock 1Password and reconnect."
+            } else {
+                humanError = "Authentication failed: Permission denied"
+            }
         } else if lower.contains("connection refused") {
             humanError = "Connection refused by \(tunnel.host)"
         } else if lower.contains("host key verification failed") {
+            permanentFailure = true
             humanError = "Host key verification failed for \(tunnel.host)"
         } else if lower.contains("no route to host") {
             humanError = "No route to host \(tunnel.host)"
@@ -144,7 +152,7 @@ final class TunnelProcess: ObservableObject {
     }
 
     private func scheduleReconnect(tunnel: Tunnel) {
-        guard !manualStop else { return }
+        guard !manualStop, !permanentFailure else { return }
         let delay = policy.delay
         policy.increment()
         let attempt = policy.attempt
