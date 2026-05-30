@@ -5,18 +5,11 @@ struct SidebarView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    Color(.controlBackgroundColor).opacity(0.82),
-                    Color(.windowBackgroundColor).opacity(0.68)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            ViaductStyle.sidebarBackground
 
             VStack(spacing: 0) {
-                Color.clear
-                .frame(height: ViaductStyle.titlebarHeight)
+                ViaductStyle.sidebarBackground
+                    .frame(height: ViaductStyle.titlebarHeight)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 2) {
@@ -65,7 +58,6 @@ struct SidebarView: View {
                 sidebarFooter
             }
         }
-        .background(.ultraThinMaterial)
         .overlay(alignment: .trailing) { Rectangle().fill(ViaductStyle.hairline).frame(width: 0.5) }
         .frame(width: ViaductStyle.sidebarWidth)
     }
@@ -98,6 +90,21 @@ struct SidebarView: View {
                 .monospacedDigit()
 
             Spacer()
+
+            Button {
+                appState.selectedSidebarItem = .settings
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(appState.selectedSidebarItem == .settings ? .white : .secondary)
+                    .frame(width: 24, height: 22)
+                    .background(
+                        appState.selectedSidebarItem == .settings ? ViaductStyle.accent : ViaductStyle.surface,
+                        in: RoundedRectangle(cornerRadius: 5)
+                    )
+            }
+            .buttonStyle(.plain)
+            .help("Settings")
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)

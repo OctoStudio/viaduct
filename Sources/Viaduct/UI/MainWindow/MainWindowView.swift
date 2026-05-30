@@ -7,10 +7,15 @@ struct MainWindowView: View {
     var body: some View {
         HStack(spacing: 0) {
             SidebarView()
-            TunnelListView()
-            TunnelDetailView()
+            if appState.selectedSidebarItem == .settings {
+                MainSettingsView()
+            } else {
+                TunnelListView()
+                TunnelDetailView()
+            }
         }
-        .frame(minWidth: 900, idealWidth: 1140, minHeight: 560, idealHeight: 720)
+        .frame(minWidth: 1180, idealWidth: 1420, minHeight: 620, idealHeight: 760)
+        .ignoresSafeArea(.container, edges: [.top, .leading])
         .preferredColorScheme(AppAppearance(rawValue: appearance)?.colorScheme)
         .onAppear { appState.reload() }
         .sheet(isPresented: $appState.isEditorPresented) {

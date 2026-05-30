@@ -26,6 +26,9 @@ final class AppState {
         tunnels = (try? repository.fetchAllTunnels()) ?? []
         tags = (try? repository.fetchAllTags()) ?? []
         tunnelTags = (try? repository.fetchTagsByTunnel()) ?? [:]
+        if selectedTunnelID.map({ id in tunnels.contains(where: { $0.id == id }) }) != true {
+            selectedTunnelID = tunnels.first?.id
+        }
     }
 
     func reload() {
@@ -54,6 +57,8 @@ final class AppState {
             result = result.filter { tunnel in
                 (tunnelTags[tunnel.id] ?? []).contains(where: { $0.id == tag.id })
             }
+        case .settings:
+            result = []
         }
 
         if !searchText.isEmpty {
@@ -97,4 +102,5 @@ enum SidebarItem: Hashable {
     case errors
     case autoConnect
     case tag(Tag)
+    case settings
 }

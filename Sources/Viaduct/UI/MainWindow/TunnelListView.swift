@@ -43,12 +43,12 @@ struct TunnelListView: View {
                         }
                     }
                 }
-                .background(Color(.controlBackgroundColor).opacity(0.72))
+                .background(ViaductStyle.listBackground)
             }
 
             listFooter
         }
-        .background(Color(.controlBackgroundColor))
+        .background(ViaductStyle.listBackground)
         .overlay(alignment: .trailing) { Rectangle().fill(ViaductStyle.hairline).frame(width: 0.5) }
         .frame(width: ViaductStyle.listWidth)
         .confirmationDialog(
@@ -140,9 +140,9 @@ struct TunnelListView: View {
             .buttonStyle(.plain)
             .help("New Tunnel (⌘N)")
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 12)
         .frame(height: ViaductStyle.titlebarHeight)
-        .background(.bar)
+        .background(ViaductStyle.titlebarBackground)
         .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
     }
 

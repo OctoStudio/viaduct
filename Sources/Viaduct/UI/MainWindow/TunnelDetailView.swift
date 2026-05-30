@@ -14,8 +14,8 @@ struct TunnelDetailView: View {
     }
 
     var body: some View {
-        if let tunnel {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            if let tunnel {
                 detailTitleBar(tunnel)
 
                 ScrollView {
@@ -31,40 +31,43 @@ struct TunnelDetailView: View {
                         activityCard()
                         tagsView(tunnel)
                     }
-                    .padding(.horizontal, 22)
-                    .padding(.top, 18)
-                    .padding(.bottom, 30)
+                    .padding(.horizontal, 28)
+                    .padding(.top, 24)
+                    .padding(.bottom, 34)
+                }
+            } else {
+                emptyTitleBar
+                ContentUnavailableView(
+                    "Select a Tunnel",
+                    systemImage: "rectangle.connected.to.line.below",
+                    description: Text("Choose a tunnel from the list, or create a new one.")
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .background(ViaductStyle.detailBackground)
+        .onAppear {
+            if let tunnel { loadEvents(for: tunnel) }
+        }
+        .onChange(of: appState.selectedTunnelID) { _, _ in
+            if let tunnel { loadEvents(for: tunnel) }
+        }
+        .confirmationDialog(
+            "Delete Tunnel?",
+            isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }),
+            titleVisibility: .visible
+        ) {
+            if let pendingDelete {
+                Button("Delete \(pendingDelete.name)", role: .destructive) {
+                    appState.deleteTunnel(pendingDelete)
+                    self.pendingDelete = nil
                 }
             }
-            .background(Color(.windowBackgroundColor))
-            .navigationTitle(tunnel.name)
-            .onAppear { loadEvents(for: tunnel) }
-            .onChange(of: appState.selectedTunnelID) { _, _ in
-                loadEvents(for: tunnel)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            if let pendingDelete {
+                Text("This removes the saved tunnel, its tags, and connection log for \(pendingDelete.name).")
             }
-            .confirmationDialog(
-                "Delete Tunnel?",
-                isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }),
-                titleVisibility: .visible
-            ) {
-                if let pendingDelete {
-                    Button("Delete \(pendingDelete.name)", role: .destructive) {
-                        appState.deleteTunnel(pendingDelete)
-                        self.pendingDelete = nil
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                if let pendingDelete {
-                    Text("This removes the saved tunnel, its tags, and connection log for \(pendingDelete.name).")
-                }
-            }
-        } else {
-            ContentUnavailableView(
-                "Select a Tunnel",
-                systemImage: "rectangle.connected.to.line.below",
-                description: Text("Choose a tunnel from the list, or create a new one.")
-            )
         }
     }
 
@@ -113,11 +116,35 @@ struct TunnelDetailView: View {
             }
             .buttonStyle(DetailIconButtonStyle(isActive: showCommand))
             .help("Show Command")
+
+            settingsButton
         }
         .padding(.horizontal, 18)
         .frame(height: ViaductStyle.titlebarHeight)
-        .background(.bar)
+        .background(ViaductStyle.titlebarBackground)
         .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+    }
+
+    private var emptyTitleBar: some View {
+        HStack {
+            Spacer()
+            settingsButton
+        }
+        .padding(.horizontal, 18)
+        .frame(height: ViaductStyle.titlebarHeight)
+        .background(ViaductStyle.titlebarBackground)
+        .overlay(alignment: .bottom) { Rectangle().fill(ViaductStyle.hairline).frame(height: 0.5) }
+    }
+
+    private var settingsButton: some View {
+        Button {
+            appState.selectedSidebarItem = .settings
+        } label: {
+            Image(systemName: "gearshape")
+                .font(.system(size: 13, weight: .medium))
+        }
+        .buttonStyle(DetailIconButtonStyle())
+        .help("Settings")
     }
 
     // MARK: - Status banner
@@ -165,7 +192,7 @@ struct TunnelDetailView: View {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 11))
                         .frame(width: 26, height: 26)
-                        .background(.quaternary, in: RoundedRectangle(cornerRadius: 6))
+                        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 6))
                         .overlay {
                             RoundedRectangle(cornerRadius: 6)
                                 .strokeBorder(Color(.separatorColor).opacity(0.6), lineWidth: 0.5)
@@ -548,7 +575,7 @@ struct DetailCard<Content: View>: View {
             VStack(spacing: 0) {
                 content
             }
-            .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 10))
+            .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(Color(.separatorColor).opacity(0.5), lineWidth: 0.5)
@@ -631,7 +658,7 @@ struct MetricTile<Value: View>: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 8))
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(Color(.separatorColor).opacity(0.4), lineWidth: 0.5)

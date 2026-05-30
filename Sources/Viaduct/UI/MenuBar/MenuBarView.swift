@@ -144,7 +144,9 @@ struct MenuBarView: View {
 
             Spacer()
 
-            SettingsLink {
+            Button {
+                WindowManager.shared.openSettingsPage()
+            } label: {
                 Text("Settings")
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)

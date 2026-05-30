@@ -1,9 +1,10 @@
 import SwiftUI
+import AppKit
 
 enum ViaductStyle {
-    static let sidebarWidth: CGFloat = 200
-    static let listWidth: CGFloat = 320
-    static let titlebarHeight: CGFloat = 42
+    static let sidebarWidth: CGFloat = 220
+    static let listWidth: CGFloat = 340
+    static let titlebarHeight: CGFloat = 50
 
     static let accent = Color(red: 0.04, green: 0.52, blue: 1.0)
     static let success = Color(red: 0.16, green: 0.71, blue: 0.26)
@@ -17,6 +18,25 @@ enum ViaductStyle {
     static let surfaceActive = Color.primary.opacity(0.085)
     static let chip = Color.primary.opacity(0.055)
     static let input = Color.primary.opacity(0.045)
+
+    static let sidebarBackground = adaptiveColor(dark: 0x1d1d1f, light: 0xf3f6fa)
+    static let listBackground = adaptiveColor(dark: 0x1b1b1d, light: 0xf8f8fa)
+    static let detailBackground = adaptiveColor(dark: 0x202022, light: 0xffffff)
+    static let titlebarBackground = adaptiveColor(dark: 0x242427, light: 0xfbfbfc)
+    static let cardBackground = adaptiveColor(dark: 0x2a2a2d, light: 0xfbfbfc)
+
+    private static func adaptiveColor(dark: Int, light: Int) -> Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            let value = isDark ? dark : light
+            return NSColor(
+                red: CGFloat((value >> 16) & 0xff) / 255,
+                green: CGFloat((value >> 8) & 0xff) / 255,
+                blue: CGFloat(value & 0xff) / 255,
+                alpha: 1
+            )
+        })
+    }
 }
 
 struct TrafficLights: View {

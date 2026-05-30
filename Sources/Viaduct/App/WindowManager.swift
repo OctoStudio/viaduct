@@ -16,7 +16,7 @@ final class WindowManager {
             return
         }
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 1140, height: 720),
+            contentRect: NSRect(x: 0, y: 0, width: 1420, height: 760),
             styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -42,6 +42,11 @@ final class WindowManager {
         DispatchQueue.main.async {
             AppState.shared.isEditorPresented = true
         }
+    }
+
+    func openSettingsPage() {
+        AppState.shared.selectedSidebarItem = .settings
+        openMain()
     }
 
     private func activate() {
