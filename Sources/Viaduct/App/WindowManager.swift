@@ -13,13 +13,15 @@ final class WindowManager {
             return
         }
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 960, height: 600),
-            styleMask: [.titled, .closable, .resizable, .miniaturizable],
+            contentRect: NSRect(x: 0, y: 0, width: 1140, height: 720),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
         window.identifier = NSUserInterfaceItemIdentifier("ViaductMain")
         window.title = "Viaduct"
+        window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
         window.center()
         window.contentView = NSHostingView(rootView: MainWindowView())
         window.makeKeyAndOrderFront(nil)

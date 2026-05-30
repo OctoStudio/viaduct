@@ -8,6 +8,7 @@ final class TunnelManager {
 
     private(set) var processes: [UUID: TunnelProcess] = [:]
     private(set) var states: [UUID: TunnelState] = [:]
+    private(set) var connectedDates: [UUID: Date] = [:]
     private let repository: TunnelRepository
 
     private init(repository: TunnelRepository = TunnelRepository()) {
@@ -45,7 +46,16 @@ final class TunnelManager {
             proc = TunnelProcess(tunnelID: tunnel.id, repository: repository)
             proc.onStateChange = { [weak self] newState in
                 Task { @MainActor [weak self] in
-                    self?.states[tunnel.id] = newState
+                    guard let self else { return }
+                    self.states[tunnel.id] = newState
+                    switch newState {
+                    case .connected:
+                        self.connectedDates[tunnel.id] = Date()
+                    case .stopped, .failed, .idle:
+                        self.connectedDates.removeValue(forKey: tunnel.id)
+                    default:
+                        break
+                    }
                 }
             }
             processes[tunnel.id] = proc
@@ -83,6 +93,10 @@ final class TunnelManager {
 
     func state(for tunnelID: UUID) -> TunnelState {
         states[tunnelID] ?? .idle
+    }
+
+    func connectedAt(for tunnelID: UUID) -> Date? {
+        connectedDates[tunnelID]
     }
 }
 

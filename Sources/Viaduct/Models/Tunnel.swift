@@ -139,3 +139,55 @@ extension Tunnel: FetchableRecord, PersistableRecord {
         static let updatedAt = Column(CodingKeys.updatedAt)
     }
 }
+
+extension TunnelType {
+    var typeLabel: String {
+        switch self {
+        case .local: return "Local"
+        case .remote: return "Remote"
+        case .dynamic: return "SOCKS"
+        }
+    }
+}
+
+extension Tunnel {
+    var typeLabel: String { type.typeLabel }
+
+    var endpointDescription: String? {
+        let bind = bindAddress?.isEmpty == false ? bindAddress! : "127.0.0.1"
+        switch type {
+        case .local:
+            guard let localPort else { return nil }
+            return "\(bind):\(localPort)"
+        case .remote:
+            guard let remotePort else { return nil }
+            let remoteBind = bindAddress?.isEmpty == false ? bindAddress! : host
+            return "\(remoteBind):\(remotePort)"
+        case .dynamic:
+            guard let localPort else { return nil }
+            return "\(bind):\(localPort)"
+        }
+    }
+
+    var routeDescription: String {
+        let bind = bindAddress?.isEmpty == false ? bindAddress! : "127.0.0.1"
+        switch type {
+        case .local:
+            guard let localPort, let remoteHost, let remotePort else {
+                return "Incomplete local forward via \(host)"
+            }
+            return "\(bind):\(localPort) -> \(remoteHost):\(remotePort) via \(host)"
+        case .remote:
+            guard let remotePort, let localPort else {
+                return "Incomplete remote forward via \(host)"
+            }
+            let targetHost = remoteHost?.isEmpty == false ? remoteHost! : "localhost"
+            return "\(host):\(remotePort) -> \(targetHost):\(localPort)"
+        case .dynamic:
+            guard let localPort else {
+                return "Incomplete SOCKS proxy via \(host)"
+            }
+            return "SOCKS \(bind):\(localPort) via \(host)"
+        }
+    }
+}

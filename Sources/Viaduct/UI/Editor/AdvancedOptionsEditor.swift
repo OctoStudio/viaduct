@@ -63,9 +63,10 @@ private struct OptionRow: View {
                         suggestions = SSHDirectiveLibrary.shared.completions(prefix: newKey)
                         showSuggestions = !suggestions.isEmpty && !newKey.isEmpty
                     }
-                if showSuggestions {
-                    suggestionList
-                }
+                    .popover(isPresented: $showSuggestions, arrowEdge: .bottom) {
+                        suggestionList
+                            .frame(width: 220)
+                    }
             }
 
             Text("=").foregroundStyle(.tertiary)
@@ -113,7 +114,5 @@ private struct OptionRow: View {
             }
         }
         .background(.background)
-        .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color(.separatorColor)))
-        .shadow(radius: 3)
     }
 }

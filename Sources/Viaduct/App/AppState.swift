@@ -48,6 +48,8 @@ final class AppState {
                 if case .failed = TunnelManager.shared.state(for: $0.id) { return true }
                 return false
             }
+        case .autoConnect:
+            result = result.filter { $0.autoConnect }
         case .tag(let tag):
             result = result.filter { tunnel in
                 (tunnelTags[tunnel.id] ?? []).contains(where: { $0.id == tag.id })
@@ -93,5 +95,6 @@ enum SidebarItem: Hashable {
     case allTunnels
     case connected
     case errors
+    case autoConnect
     case tag(Tag)
 }

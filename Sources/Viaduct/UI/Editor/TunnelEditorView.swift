@@ -91,6 +91,10 @@ struct TunnelEditorView: View {
     @State private var localPortInvalid = false
     @State private var remoteHostInvalid = false
     @State private var remotePortInvalid = false
+    @State private var validationMessage: String?
+    @State private var showAuthentication = true
+    @State private var showBehavior = false
+    @State private var showAdvanced = false
     @FocusState private var focusedField: Field?
 
     private let existingID: UUID?
@@ -133,7 +137,6 @@ struct TunnelEditorView: View {
                 Spacer()
                 Button("Save") { save() }
                     .buttonStyle(.borderedProminent)
-                    .disabled(!isValid)
                     .keyboardShortcut(.return, modifiers: .command)
             }
             .padding(.horizontal, 20)
@@ -147,10 +150,22 @@ struct TunnelEditorView: View {
                     identitySection
                     forwardingSection
                     sshSection
-                    authSection
+                    if let validationMessage {
+                        validationBanner(validationMessage)
+                    }
+                    DisclosureGroup("Authentication", isExpanded: $showAuthentication) {
+                        authSection
+                            .padding(.top, 6)
+                    }
                     if !appState.tags.isEmpty { tagsSection }
-                    behaviorSection
-                    advancedSection
+                    DisclosureGroup("Behavior", isExpanded: $showBehavior) {
+                        behaviorSection
+                            .padding(.top, 6)
+                    }
+                    DisclosureGroup("Advanced Options", isExpanded: $showAdvanced) {
+                        advancedSection
+                            .padding(.top, 6)
+                    }
                 }
                 .padding(20)
             }
@@ -344,7 +359,7 @@ struct TunnelEditorView: View {
     }
 
     private var authSection: some View {
-        EditorSection(title: "Authentication") {
+        EditorSection {
             EditorRow(label: "Method") {
                 Picker("", selection: $authMethod) {
                     Text("System ssh-agent").tag(AuthMethod.systemAgent)
@@ -383,7 +398,7 @@ struct TunnelEditorView: View {
     }
 
     private var behaviorSection: some View {
-        EditorSection(title: "Behavior") {
+        EditorSection {
             EditorRow(label: "Auto-connect") {
                 Toggle("Launch with app", isOn: $autoConnect)
                     .font(.callout)
@@ -402,11 +417,26 @@ struct TunnelEditorView: View {
     }
 
     private var advancedSection: some View {
-        EditorSection(title: "Advanced Options") {
+        EditorSection {
             AdvancedOptionsEditor(options: $extraOptions)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
         }
+    }
+
+    private func validationBanner(_ message: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.red)
+            Text(message)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer()
+        }
+        .padding(10)
+        .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.red.opacity(0.25), lineWidth: 0.5))
     }
 
     // MARK: - Helpers
@@ -434,9 +464,25 @@ struct TunnelEditorView: View {
     private func save() {
         let n = name.trimmingCharacters(in: .whitespaces)
         let h = host.trimmingCharacters(in: .whitespaces)
-        if n.isEmpty { nameInvalid = true; focusedField = .name; return }
-        if h.isEmpty { hostInvalid = true; focusedField = .host; return }
-        if !isValidPort(port) { portInvalid = true; focusedField = .port; return }
+        validationMessage = nil
+        if n.isEmpty {
+            nameInvalid = true
+            validationMessage = "Enter a tunnel name."
+            focusedField = .name
+            return
+        }
+        if h.isEmpty {
+            hostInvalid = true
+            validationMessage = "Enter the SSH server host."
+            focusedField = .host
+            return
+        }
+        if !isValidPort(port) {
+            portInvalid = true
+            validationMessage = "Enter an SSH port from 1 to 65535."
+            focusedField = .port
+            return
+        }
         guard validateForwarding() else { return }
 
         let tunnel = Tunnel(
@@ -485,17 +531,32 @@ struct TunnelEditorView: View {
             localPortInvalid = !isValidPort(localPort)
             remoteHostInvalid = remoteHost.trimmingCharacters(in: .whitespaces).isEmpty
             remotePortInvalid = !isValidPort(remotePort)
-            if localPortInvalid { focusedField = .localPort }
-            else if remoteHostInvalid { focusedField = .remoteHost }
-            else if remotePortInvalid { focusedField = .remotePort }
+            if localPortInvalid {
+                validationMessage = "Enter a local port from 1 to 65535."
+                focusedField = .localPort
+            } else if remoteHostInvalid {
+                validationMessage = "Enter the host that this local tunnel forwards to."
+                focusedField = .remoteHost
+            } else if remotePortInvalid {
+                validationMessage = "Enter a remote port from 1 to 65535."
+                focusedField = .remotePort
+            }
         case .remote:
             remotePortInvalid = !isValidPort(remotePort)
             localPortInvalid = !isValidPort(localPort)
-            if remotePortInvalid { focusedField = .remotePort }
-            else if localPortInvalid { focusedField = .localPort }
+            if remotePortInvalid {
+                validationMessage = "Enter a remote listen port from 1 to 65535."
+                focusedField = .remotePort
+            } else if localPortInvalid {
+                validationMessage = "Enter a local destination port from 1 to 65535."
+                focusedField = .localPort
+            }
         case .dynamic:
             localPortInvalid = !isValidPort(localPort)
-            if localPortInvalid { focusedField = .localPort }
+            if localPortInvalid {
+                validationMessage = "Enter a SOCKS listen port from 1 to 65535."
+                focusedField = .localPort
+            }
         }
 
         return !localPortInvalid && !remoteHostInvalid && !remotePortInvalid
