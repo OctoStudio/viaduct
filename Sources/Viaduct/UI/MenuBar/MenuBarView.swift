@@ -215,20 +215,22 @@ struct MenuBarTunnelRow: View {
 
             Spacer()
 
-            Button(buttonTitle) {
-                AppState.shared.toggleTunnel(tunnel)
+            if case .reconnecting = state {
+                Button("Stop") {
+                    TunnelManager.shared.stop(tunnelID: tunnel.id)
+                }
+                .menuBarButton(color: ViaductStyle.danger)
+
+                Button("Retry") {
+                    TunnelManager.shared.restart(tunnelID: tunnel.id)
+                }
+                .menuBarButton(color: ViaductStyle.warning)
+            } else {
+                Button(buttonTitle) {
+                    AppState.shared.toggleTunnel(tunnel)
+                }
+                .menuBarButton(color: buttonColor)
             }
-            .buttonStyle(.plain)
-            .font(.system(size: 11, weight: .bold, design: .monospaced))
-            .foregroundStyle(buttonColor)
-            .textCase(.uppercase)
-            .padding(.horizontal, 16)
-            .frame(height: 34)
-            .background {
-                Capsule()
-                    .fill(buttonColor.opacity(0.10))
-            }
-            .overlay { Capsule().strokeBorder(buttonColor.opacity(0.22), lineWidth: 0.8) }
         }
         .padding(.vertical, 18)
         .contentShape(Rectangle())
@@ -248,6 +250,7 @@ struct MenuBarTunnelRow: View {
         }
     }
 
+    // Only used when state is not .reconnecting
     private var compactRoute: String {
         let bind = tunnel.bindAddress.flatMap { $0.isEmpty ? nil : $0 } ?? "127.0.0.1"
         switch tunnel.type {
@@ -261,5 +264,19 @@ struct MenuBarTunnelRow: View {
             guard let lp = tunnel.localPort else { return tunnel.host }
             return "SOCKS \(bind):\(lp)"
         }
+    }
+}
+
+private extension View {
+    func menuBarButton(color: Color) -> some View {
+        self
+            .buttonStyle(.plain)
+            .font(.system(size: 11, weight: .bold, design: .monospaced))
+            .foregroundStyle(color)
+            .textCase(.uppercase)
+            .padding(.horizontal, 16)
+            .frame(height: 34)
+            .background { Capsule().fill(color.opacity(0.10)) }
+            .overlay { Capsule().strokeBorder(color.opacity(0.22), lineWidth: 0.8) }
     }
 }
