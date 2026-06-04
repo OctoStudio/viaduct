@@ -71,8 +71,8 @@ Scripts/package-release.sh
 
 Artifacts are written to `dist/`:
 
-- `Viaduct-1.0-ad-hoc.zip`
-- `Viaduct-1.0-ad-hoc.dmg`
+- `Viaduct-1.0.1-ad-hoc.zip`
+- `Viaduct-1.0.1-ad-hoc.dmg`
 
 The script uses ad-hoc signing so it can run on machines without a Developer ID certificate. For public distribution, sign with a Developer ID Application certificate and notarize the exported app before shipping.
 
