@@ -1,6 +1,6 @@
 name: Viaduct
 options:
-  bundleIdPrefix: com.qdecosne
+  bundleIdPrefix: fr.octostudio.
   deploymentTarget:
     macOS: "14.0"
   xcodeVersion: "16.0"
@@ -50,7 +50,7 @@ targets:
       - Sources/Viaduct/Resources/Assets.xcassets
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.qdecosne.Viaduct
+        PRODUCT_BUNDLE_IDENTIFIER: fr.octostudio.Viaduct
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_FILE: Sources/Viaduct/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: Sources/Viaduct/Resources/Viaduct.entitlements

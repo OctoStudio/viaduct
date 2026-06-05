@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -327,7 +327,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					FF44307020060B6248DAED46 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -343,9 +342,8 @@
 			mainGroup = 085C626C5FF443CD47D69871;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -585,14 +583,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/Viaduct/Resources/Viaduct.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8UUFGDFC89;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Sources/Viaduct/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Viaduct;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.Viaduct;
+				MARKETING_VERSION = 1.01;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.octostudio.viaduct;
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
@@ -603,14 +606,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/Viaduct/Resources/Viaduct.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8UUFGDFC89;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Sources/Viaduct/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Viaduct;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.qdecosne.Viaduct;
+				MARKETING_VERSION = 1.01;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.octostudio.viaduct;
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
@@ -649,7 +657,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+		FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
 			requirement = {
@@ -662,12 +670,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		601110B430235BA19F0F500E /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB" */;
 			productName = GRDB;
 		};
 		B0DE5B6CA5754472E1504A49 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			package = FC54DA5C8D4E943C39A0F51B /* XCRemoteSwiftPackageReference "GRDB" */;
 			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */

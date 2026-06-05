@@ -106,33 +106,33 @@ final class TunnelProcess: ObservableObject {
         let humanError: String?
 
         if lower.contains("permission denied") {
-            permanentFailure = true
             if tunnel.authMethod == .onePasswordAgent {
-                humanError = "Authentication failed — 1Password may be locked. Unlock 1Password and reconnect."
+                // 1Password may be locked — transient, keep retrying
+                lastError = "Authentication failed — 1Password may be locked"
             } else {
-                humanError = "Authentication failed: Permission denied"
+                permanentFailure = true
+                let err = "Authentication failed: Permission denied"
+                lastError = err
+                transition(to: .failed(err))
             }
-        } else if lower.contains("connection refused") {
-            humanError = "Connection refused by \(tunnel.host)"
         } else if lower.contains("host key verification failed") {
             permanentFailure = true
-            humanError = "Host key verification failed for \(tunnel.host)"
-        } else if lower.contains("no route to host") {
-            humanError = "No route to host \(tunnel.host)"
-        } else if lower.contains("connection timed out") {
-            humanError = "Connection timed out to \(tunnel.host)"
-        } else if lower.contains("bind: address already in use") {
-            humanError = "Local port \(tunnel.localPort.map(String.init) ?? "?") already in use"
-        } else if lower.contains("forwarding_success") || lower.contains("all forwarding requests processed") {
-            humanError = nil
-            transition(to: .connected)
-        } else {
-            humanError = nil
-        }
-
-        if let err = humanError {
+            let err = "Host key verification failed for \(tunnel.host)"
             lastError = err
             transition(to: .failed(err))
+        } else if lower.contains("bind: address already in use") {
+            permanentFailure = true
+            let err = "Local port \(tunnel.localPort.map(String.init) ?? "?") already in use"
+            lastError = err
+            transition(to: .failed(err))
+        } else if lower.contains("connection refused") {
+            lastError = "Connection refused by \(tunnel.host)"
+        } else if lower.contains("no route to host") {
+            lastError = "No route to host \(tunnel.host)"
+        } else if lower.contains("connection timed out") {
+            lastError = "Connection timed out to \(tunnel.host)"
+        } else if lower.contains("forwarding_success") || lower.contains("all forwarding requests processed") {
+            transition(to: .connected)
         }
     }
 
@@ -160,7 +160,7 @@ final class TunnelProcess: ObservableObject {
 
         reconnectTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(delay))
-            guard let self, !self.manualStop, !Task.isCancelled else { return }
+            guard let self, !self.manualStop, !self.permanentFailure, !Task.isCancelled else { return }
             guard let fresh = try? self.repository.fetchTunnel(id: self.tunnelID), fresh.isEnabled else { return }
             self.launch(tunnel: fresh)
         }

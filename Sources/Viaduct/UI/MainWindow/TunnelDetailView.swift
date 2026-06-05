@@ -187,8 +187,6 @@ struct TunnelDetailView: View {
                             }
                     }
                     .buttonStyle(.plain)
-                    .disabled(!running)
-                    .opacity(running ? 1 : 0.4)
                 }
             }
 
