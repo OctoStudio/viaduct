@@ -92,19 +92,40 @@ struct SidebarView: View {
             Spacer()
 
             Button {
-                appState.selectedSidebarItem = .settings
+                appState.isAboutPresented = true
+                WindowManager.shared.openMain()
             } label: {
-                Image(systemName: "gearshape")
+                Image(systemName: "info.circle")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(appState.selectedSidebarItem == .settings ? .white : .secondary)
+                    .foregroundStyle(.secondary)
                     .frame(width: 28, height: 24)
-                    .background(
-                        appState.selectedSidebarItem == .settings ? ViaductStyle.accent : ViaductStyle.cardBackground,
-                        in: RoundedRectangle(cornerRadius: 7)
-                    )
+                    .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: 7))
             }
             .buttonStyle(.plain)
-            .help("Settings")
+            .help("About Viaduct")
+
+            Button {
+                appState.selectedSidebarItem = .settings
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(appState.selectedSidebarItem == .settings ? .white : .secondary)
+                        .frame(width: 28, height: 24)
+                        .background(
+                            appState.selectedSidebarItem == .settings ? ViaductStyle.accent : ViaductStyle.cardBackground,
+                            in: RoundedRectangle(cornerRadius: 7)
+                        )
+                    if UpdateChecker.shared.updateAvailable {
+                        Circle()
+                            .fill(ViaductStyle.warning)
+                            .frame(width: 7, height: 7)
+                            .offset(x: 2, y: -2)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .help(UpdateChecker.shared.updateAvailable ? "Update available — open Settings" : "Settings")
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 10)

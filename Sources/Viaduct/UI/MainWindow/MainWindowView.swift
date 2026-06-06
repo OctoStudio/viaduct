@@ -21,6 +21,10 @@ struct MainWindowView: View {
         .sheet(isPresented: $appState.isEditorPresented) {
             TunnelEditorView(tunnel: appState.editingTunnel)
         }
+        .sheet(isPresented: $appState.isAboutPresented) {
+            AboutView()
+                .background(ViaductStyle.detailBackground)
+        }
         .keyboardShortcut("n", modifiers: .command)  // handled via toolbar button
     }
 }

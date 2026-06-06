@@ -13,6 +13,7 @@ final class AppState {
     var selectedTunnelID: UUID?
     var isMainWindowOpen = false
     var isEditorPresented = false
+    var isAboutPresented = false
     var editingTunnel: Tunnel?
 
     var searchText = ""

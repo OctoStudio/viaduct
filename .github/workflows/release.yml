@@ -1,0 +1,144 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      # ── Signing ──────────────────────────────────────────────────────────────
+
+      - name: Import signing certificate
+        env:
+          CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN=$RUNNER_TEMP/build.keychain
+          security create-keychain -p "" $KEYCHAIN
+          security set-keychain-settings -lut 21600 $KEYCHAIN
+          security unlock-keychain -p "" $KEYCHAIN
+          echo "$CERTIFICATE_P12" | base64 --decode > $RUNNER_TEMP/cert.p12
+          security import $RUNNER_TEMP/cert.p12 -k $KEYCHAIN \
+            -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security list-keychains -d user -s $KEYCHAIN
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" $KEYCHAIN
+
+      # ── Build ─────────────────────────────────────────────────────────────────
+
+      - name: Archive
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcodebuild archive \
+            -scheme Viaduct \
+            -configuration Release \
+            -archivePath "$RUNNER_TEMP/Viaduct.xcarchive" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+            CODE_SIGN_IDENTITY="Developer ID Application"
+
+      - name: Export app
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > $RUNNER_TEMP/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>developer-id</string>
+            <key>teamID</key>
+            <string>${DEVELOPMENT_TEAM}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Viaduct.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export"
+
+      # ── Notarize ──────────────────────────────────────────────────────────────
+
+      - name: Notarize
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          ditto -c -k --keepParent \
+            "$RUNNER_TEMP/export/Viaduct.app" \
+            "$RUNNER_TEMP/Viaduct-notarize.zip"
+
+          xcrun notarytool submit "$RUNNER_TEMP/Viaduct-notarize.zip" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+
+          xcrun stapler staple "$RUNNER_TEMP/export/Viaduct.app"
+
+      # ── Package ───────────────────────────────────────────────────────────────
+
+      - name: Create release zip
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          ditto -c -k --keepParent \
+            "$RUNNER_TEMP/export/Viaduct.app" \
+            "$RUNNER_TEMP/Viaduct-${VERSION}.zip"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      # ── Appcast ───────────────────────────────────────────────────────────────
+
+      - name: Download Sparkle tools
+        run: |
+          SPARKLE_VERSION="2.7.5"
+          curl -L "https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz" \
+            -o "$RUNNER_TEMP/sparkle.tar.xz"
+          mkdir -p "$RUNNER_TEMP/sparkle"
+          tar -xf "$RUNNER_TEMP/sparkle.tar.xz" -C "$RUNNER_TEMP/sparkle"
+
+      - name: Generate appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          TOOLS="$RUNNER_TEMP/sparkle/bin"
+          RELEASES_DIR="$RUNNER_TEMP/releases"
+          mkdir -p "$RELEASES_DIR"
+          cp "$RUNNER_TEMP/Viaduct-${VERSION}.zip" "$RELEASES_DIR/"
+
+          echo "$SPARKLE_PRIVATE_KEY" | \
+            "$TOOLS/generate_appcast" \
+              --ed-key-file - \
+              --download-url-prefix "https://github.com/OctoStudio/viaduct/releases/download/v${VERSION}/" \
+              --link "https://github.com/OctoStudio/viaduct/releases/tag/v${VERSION}" \
+              "$RELEASES_DIR"
+
+          cp "$RELEASES_DIR/appcast.xml" "$RUNNER_TEMP/appcast.xml"
+
+      # ── Release ───────────────────────────────────────────────────────────────
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Viaduct ${{ env.VERSION }}"
+          generate_release_notes: true
+          files: |
+            ${{ runner.temp }}/Viaduct-${{ env.VERSION }}.zip
+            ${{ runner.temp }}/appcast.xml

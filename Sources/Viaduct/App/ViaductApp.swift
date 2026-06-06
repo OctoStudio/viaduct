@@ -66,6 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Task { @MainActor in TunnelManager.shared.launchAutoConnectTunnels() }
         }
         statusBarController = StatusBarController()
+        Task { @MainActor in UpdateChecker.shared.check() }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
@@ -126,9 +127,13 @@ private struct SettingsContent: View {
     @AppStorage(AppSettings.connectAtLoginKey) private var connectAtLogin = true
     @State private var openAtLogin = SMAppService.mainApp.status == .enabled
     @State private var loginItemError: String?
+    @State private var updateChecker = UpdateChecker.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
+            if updateChecker.updateAvailable {
+                UpdateAvailableCard(version: updateChecker.latestVersion)
+            }
             SettingsCard(title: "General") {
                 SettingsPickerRow(label: "Appearance") {
                     Picker("", selection: $appearance) {
@@ -253,6 +258,46 @@ private struct SettingsTextRow: View {
     }
 }
 
+private struct UpdateAvailableCard: View {
+    let version: String?
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Circle()
+                .fill(ViaductStyle.warning)
+                .frame(width: 8, height: 8)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Update available\(version.map { " — v\($0)" } ?? "")")
+                    .font(.system(size: 14, weight: .semibold))
+                Text("Download the latest version from GitHub.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button("Download Update") {
+                UpdateChecker.shared.openReleasePage()
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(ViaductStyle.warning)
+            .padding(.horizontal, 14)
+            .frame(height: 34)
+            .background(ViaductStyle.warning.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(ViaductStyle.warning.opacity(0.25), lineWidth: 0.8)
+            }
+        }
+        .padding(.horizontal, 18)
+        .frame(minHeight: 64)
+        .background(ViaductStyle.cardBackground, in: RoundedRectangle(cornerRadius: ViaductStyle.cardCorner))
+        .overlay {
+            RoundedRectangle(cornerRadius: ViaductStyle.cardCorner)
+                .strokeBorder(ViaductStyle.warning.opacity(0.35), lineWidth: 0.8)
+        }
+    }
+}
+
 private struct SettingsRow<Content: View>: View {
     let label: String
     var last = false
@@ -279,4 +324,17 @@ private struct SettingsRow<Content: View>: View {
             }
         }
     }
+}
+
+#Preview("Update card") {
+    UpdateAvailableCard(version: "1.1.0")
+        .padding(24)
+        .frame(width: 600)
+        .background(ViaductStyle.detailBackground)
+}
+
+#Preview("Settings with update") {
+    let _ = UpdateChecker.shared.updateAvailable = true
+    let _ = UpdateChecker.shared.latestVersion = "1.1.0"
+    return SettingsView()
 }

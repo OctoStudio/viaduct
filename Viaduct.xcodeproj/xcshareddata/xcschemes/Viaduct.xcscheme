@@ -21,6 +21,20 @@
                ReferencedContainer = "container:Viaduct.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "38ACDD98CAC7D6D7BED9FBCF"
+               BuildableName = "ViaductTests.xctest"
+               BlueprintName = "ViaductTests"
+               ReferencedContainer = "container:Viaduct.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
