@@ -183,11 +183,16 @@ struct TunnelListView: View {
 
     @ViewBuilder
     private func tunnelContextMenu(_ tunnel: Tunnel) -> some View {
-        let running = isRunning(tunnelManager.state(for: tunnel.id))
+        let state = tunnelManager.state(for: tunnel.id)
+        let running = isRunning(state)
         Button(running ? "Stop" : "Connect") {
-            appState.toggleTunnel(tunnel)
+            if case .failed = state {
+                TunnelManager.shared.retry(tunnelID: tunnel.id)
+            } else {
+                appState.toggleTunnel(tunnel)
+            }
         }
-        Button("Restart") { TunnelManager.shared.restart(tunnelID: tunnel.id) }
+        Button("Restart") { TunnelManager.shared.retry(tunnelID: tunnel.id) }
         Divider()
         Button("Edit…") {
             appState.editingTunnel = tunnel
@@ -250,7 +255,13 @@ struct TunnelListRow: View {
 
             Spacer(minLength: 0)
 
-            Button { AppState.shared.toggleTunnel(tunnel) } label: {
+            Button {
+                if case .failed = state {
+                    TunnelManager.shared.retry(tunnelID: tunnel.id)
+                } else {
+                    AppState.shared.toggleTunnel(tunnel)
+                }
+            } label: {
                 Image(systemName: running ? "stop.fill" : "play.fill")
                     .font(.system(size: 8, weight: .medium))
                     .foregroundStyle(running ? ViaductStyle.danger : ViaductStyle.accent)

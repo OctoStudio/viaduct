@@ -78,6 +78,11 @@ final class TunnelManager {
         }
     }
 
+    func retry(tunnelID: UUID) {
+        guard let tunnel = try? repository.fetchTunnel(id: tunnelID), tunnel.isEnabled else { return }
+        start(tunnel: tunnel)
+    }
+
     // Called by NetworkMonitor / SleepWakeMonitor
     func reconnectActive() {
         for (id, state) in states {

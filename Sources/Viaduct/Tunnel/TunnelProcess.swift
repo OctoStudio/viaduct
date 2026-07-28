@@ -35,6 +35,9 @@ final class TunnelProcess: ObservableObject {
     func start(tunnel: Tunnel) {
         manualStop = false
         permanentFailure = false
+        lastError = nil
+        reconnectTask?.cancel()
+        reconnectTask = nil
         policy.reset()
         launch(tunnel: tunnel)
     }
@@ -64,7 +67,7 @@ final class TunnelProcess: ObservableObject {
 
         proc.terminationHandler = { [weak self] p in
             Task { @MainActor [weak self] in
-                self?.handleTermination(exitCode: p.terminationStatus, tunnel: tunnel)
+                self?.handleTermination(process: p, exitCode: p.terminationStatus, tunnel: tunnel)
             }
         }
 
@@ -103,12 +106,13 @@ final class TunnelProcess: ObservableObject {
     @MainActor
     private func parseStderrLine(_ line: String, tunnel: Tunnel) {
         let lower = line.lowercased()
-        let humanError: String?
 
         if lower.contains("permission denied") {
-            if tunnel.authMethod == .onePasswordAgent {
-                // 1Password may be locked — transient, keep retrying
-                lastError = "Authentication failed — 1Password may be locked"
+            let agentBased = tunnel.authMethod == .onePasswordAgent || tunnel.authMethod == .systemAgent
+            if agentBased {
+                // Agent may be locked/missing key — transient, keep retrying
+                let agentName = tunnel.authMethod == .onePasswordAgent ? "1Password" : "SSH agent"
+                lastError = "Authentication failed — check \(agentName) has the right key"
             } else {
                 permanentFailure = true
                 let err = "Authentication failed: Permission denied"
@@ -137,7 +141,9 @@ final class TunnelProcess: ObservableObject {
     }
 
     @MainActor
-    private func handleTermination(exitCode: Int32, tunnel: Tunnel) {
+    private func handleTermination(process terminatedProcess: Process, exitCode: Int32, tunnel: Tunnel) {
+        guard process === terminatedProcess else { return }
+
         stderrTask?.cancel()
         stderrTask = nil
         connectedTask?.cancel()

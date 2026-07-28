@@ -14,6 +14,7 @@ final class SleepWakeMonitor {
             queue: .main
         ) { _ in
             Task { @MainActor in
+                try? await Task.sleep(for: .seconds(2))
                 TunnelManager.shared.reconnectActive()
             }
         })

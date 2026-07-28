@@ -176,7 +176,7 @@ struct TunnelDetailView: View {
                     }
                     .buttonStyle(.plain)
 
-                    Button { TunnelManager.shared.restart(tunnelID: tunnel.id) } label: {
+                    Button { TunnelManager.shared.retry(tunnelID: tunnel.id) } label: {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 13))
                             .frame(width: 38, height: 38)
@@ -466,10 +466,9 @@ struct TunnelDetailView: View {
             .tint(running ? ViaductStyle.danger : ViaductStyle.accent)
         }
         ToolbarItem {
-            Button(action: { TunnelManager.shared.restart(tunnelID: tunnel.id) }) {
+            Button(action: { TunnelManager.shared.retry(tunnelID: tunnel.id) }) {
                 Label("Restart", systemImage: "arrow.clockwise")
             }
-            .disabled(!running)
         }
         ToolbarItem {
             Button(action: {

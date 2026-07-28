@@ -222,12 +222,16 @@ struct MenuBarTunnelRow: View {
                 .menuBarButton(color: ViaductStyle.danger)
 
                 Button("Retry") {
-                    TunnelManager.shared.restart(tunnelID: tunnel.id)
+                    TunnelManager.shared.retry(tunnelID: tunnel.id)
                 }
                 .menuBarButton(color: ViaductStyle.warning)
             } else {
                 Button(buttonTitle) {
-                    AppState.shared.toggleTunnel(tunnel)
+                    if case .failed = state {
+                        TunnelManager.shared.retry(tunnelID: tunnel.id)
+                    } else {
+                        AppState.shared.toggleTunnel(tunnel)
+                    }
                 }
                 .menuBarButton(color: buttonColor)
             }
